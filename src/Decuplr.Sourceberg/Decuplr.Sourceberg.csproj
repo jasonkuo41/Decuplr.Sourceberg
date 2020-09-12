@@ -5,6 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<_SourceGenerator>Decuplr.Sourceberg.Generator</_SourceGenerator>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -19,6 +20,10 @@
 		<Compile Include="..\Common\NullableAttributes.cs" Link="Common\NullableAttributes.cs" />
 		<Compile Include="..\Common\StringExtensions.cs" Link="Common\StringExtensions.cs" />
 		<Compile Include="..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\$(_SourceGenerator)\$(OutputPath)\netstandard2.1\Decuplr.Sourceberg.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
