@@ -23,18 +23,18 @@ steps:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
   displayName: 'dotnet build $(buildConfiguration)'
-
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'publish'
-    publishWebProjects: false
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --framework netstandard2.0 --output $(Build.ArtifactStagingDirectory)'
-
+    versioningScheme: 'byBuildNumber'
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'publish'
-    publishWebProjects: false
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --framework netstandard2.1 --output $(Build.ArtifactStagingDirectory)'
+    versioningScheme: 'byBuildNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
