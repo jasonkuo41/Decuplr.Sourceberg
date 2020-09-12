@@ -10,11 +10,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Decuplr.Sourceberg.Internal {
 
-    internal struct AnalyzerGroupResult {
-        public IEnumerable<Diagnostic> GeneratedDiagnostics { get; set; }
-        public IContextCollectionProvider 
-    }
-
     internal class AnalyzerGroup<TKind, TContext> where TKind : notnull {
 
         private readonly List<AnalyzerGroupNode<TKind, TContext>> _analyzers = new List<AnalyzerGroupNode<TKind, TContext>>();

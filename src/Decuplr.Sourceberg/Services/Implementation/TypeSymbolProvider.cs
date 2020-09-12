@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Decuplr.Sourceberg.Generation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -62,7 +63,7 @@ namespace Decuplr.Sourceberg.Services.Implementation {
 
             public SyntaxTree AddSource(GeneratedSourceText sourceText) {
                 var compilation = DeclaringCompilation as CSharpCompilation ?? throw new NotSupportedException("Non C# compilation is not supported");
-                var syntax = CSharpSyntaxTree.ParseText(sourceText.Text, new CSharpParseOptions(compilation.LanguageVersion), isGeneratedCode: true, cancellationToken: Parent._context.OnOperationCanceled);
+                var syntax = CSharpSyntaxTree.ParseText(sourceText.SourceText, new CSharpParseOptions(compilation.LanguageVersion), isGeneratedCode: true, cancellationToken: Parent._context.OnOperationCanceled);
                 DeclaringCompilation = DeclaringCompilation.AddSyntaxTrees(syntax);
                 GeneratedSourceTexts.Add(sourceText);
                 return syntax;
@@ -88,6 +89,6 @@ namespace Decuplr.Sourceberg.Services.Implementation {
         }
 
         public SyntaxTree AddSource(string fileName, string sourceCode) => _currentSink.AddSource(fileName, sourceCode);
-        public SyntaxTree AddSource(GeneratedSourceText sourceText) => _currentSink.AddSource(sourceText);
+        public SyntaxTree AddSource(string fileName, SourceText sourceCode) => _currentSink.AddSource(new GeneratedSourceText(fileName, sourceCode));
     }
 }
