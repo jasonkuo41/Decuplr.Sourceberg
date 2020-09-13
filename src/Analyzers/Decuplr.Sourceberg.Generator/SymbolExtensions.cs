@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 namespace Decuplr.Sourceberg.Generator {
     internal static class SymbolExtensions {
 
-        public static T AssertNotNull<T>([MaybeNull]this T? item) where T : class {
+        public static T AssertNotNull<T>(this T? item) where T : class {
             Debug.Assert(item is { });
             return item;
         }
