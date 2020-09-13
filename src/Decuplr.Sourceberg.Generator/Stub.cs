@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Decuplr.Sourceberg.Generator {
@@ -16,9 +17,15 @@ namespace Decuplr.Sourceberg.Generator {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterSymbolAction(context => {
-                if (context.Symbol.Name.EndsWith("Test"))
+                if (context.Symbol.Name.EndsWith("_Test"))
                     context.ReportDiagnostic(Diagnostic.Create(SupportedDiagnostics[0], context.Symbol.Locations.First()));
             }, SymbolKind.Method, SymbolKind.NamedType);
+
+            context.RegisterSyntaxNodeAction<SyntaxKind>(context => {
+                if (context.ContainingSymbol?.Kind == SymbolKind.NamedType)
+                    if (context.ContainingSymbol.Name.EndsWith("Test"))
+                        context.ReportDiagnostic(Diagnostic.Create(SupportedDiagnostics[0], context.Node.GetLocation()));
+            }, SyntaxKind.DeclarationExpression);
         }
     }
 }
