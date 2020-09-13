@@ -5,7 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.0.1</Version>
+		<Version>0.0.1</Version>
 		<_SourceGenerator>Decuplr.Sourceberg.Generator</_SourceGenerator>
 	</PropertyGroup>
 
@@ -24,6 +24,7 @@
 		<Compile Include="..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
 	</ItemGroup>
 
+	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
 	<ItemGroup>
 		<None Include="..\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
@@ -56,7 +57,7 @@
 	  </Compile>
 	</ItemGroup>
 
-	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->
+	<!-- Disables the nullable warnings when compiling for .NET Standard 2.0 -->
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<NoWarn>$(NoWarn);8600;8601;8602;8603;8604</NoWarn>
 	</PropertyGroup>
