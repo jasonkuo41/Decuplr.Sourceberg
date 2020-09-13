@@ -28,8 +28,7 @@ steps:
     command: 'pack'
     packagesToPack: '**/Decuplr.Sourceberg.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    versioningScheme: 'byPrereleaseNumber'
-
+    versioningScheme: 'byBuildNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
