@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Decuplr.Sourceberg.Generator {
+    /*
     [Generator]
     public class AugmentingGenerator : ISourceGenerator {
         public void Execute(SourceGeneratorContext context) {
@@ -18,7 +19,7 @@ namespace Decuplr.Sourceberg.Generator {
             return;
         }
     }
-
+    */
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TestAnalyzer : DiagnosticAnalyzer {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(new DiagnosticDescriptor("TEST-001","Hey", "Wowie there's a type that ends with test", "Test", DiagnosticSeverity.Warning, true));
