@@ -25,7 +25,7 @@ namespace Decuplr.Sourceberg.Generator {
                 if (context.ContainingSymbol?.Kind == SymbolKind.NamedType)
                     if (context.ContainingSymbol.Name.EndsWith("Test"))
                         context.ReportDiagnostic(Diagnostic.Create(SupportedDiagnostics[0], context.Node.GetLocation()));
-            }, SyntaxKind.DeclarationExpression);
+            }, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }
     }
 }
