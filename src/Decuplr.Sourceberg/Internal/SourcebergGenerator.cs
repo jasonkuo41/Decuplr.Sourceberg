@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using Decuplr.Sourceberg.Generation;
 using Decuplr.Sourceberg.Services;
-using Decuplr.Sourceberg.Services.Implementation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Decuplr.Sourceberg.Internal {
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class SourcebergGenerator : SourcebergBase {
 
+        [SuppressMessage("MicrosoftCodeAnalysisReleaseTracking", "RS2008", Justification = "A diagnostic that only generates to notify user of what exception has occured causing the source generator unable to proceed")]
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
-            = new DiagnosticDescriptor("SCBRG-XXX", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured : {1}", "InternalError", DiagnosticSeverity.Error, true);
+            = new DiagnosticDescriptor("SCBRGERR", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured : {1}", "InternalError", DiagnosticSeverity.Warning, true);
 
         private readonly SourceGeneratorContext _generatorContext;
         private readonly SourcebergSyntaxReceiver _capture;
@@ -48,7 +42,7 @@ namespace Decuplr.Sourceberg.Internal {
                                                                       GetNextContext,
                                                                       externalContextProvider,
                                                                       _generatorContext.CancellationToken));
-            
+
             SyntaxNodeAnalysisContextSource GetNextContext(SyntaxNode nextSyntax, bool isEntryPoint)
                 => new SyntaxNodeAnalysisContextSource(nextSyntax,
                                                        GetSemanticModel(nextSyntax),
@@ -132,17 +126,16 @@ namespace Decuplr.Sourceberg.Internal {
                         _generatorContext.AddSource(source.HintName, source.SourceText);
                     }
                 }
-            } 
-            catch(Exception e) {
+            }
+            catch (Exception e) {
                 GetExceptionDiagnostic(e);
                 // should we rethrow?
             }
         }
 
-        internal static SourcebergGenerator? CreateGenerator(SourceGeneratorContext context) {
+        public static void Execute(SourceGeneratorContext context) {
             if (context.SyntaxReceiver is SourcebergSyntaxReceiver syntaxCapture)
-                return new SourcebergGenerator(context, syntaxCapture);
-            return null;
+                new SourcebergGenerator(context, syntaxCapture).RunGeneration();
         }
     }
 

@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<Compile Include="..\..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
 	</ItemGroup>
 	
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->

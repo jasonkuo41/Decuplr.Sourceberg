@@ -26,7 +26,7 @@
 
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
 	<ItemGroup>
-		<None Include="..\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
