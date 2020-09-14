@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using Microsoft.CodeAnalysis;
+using ReflectionTypeInfo = System.Reflection.TypeInfo;
 
 namespace Decuplr.Sourceberg.Diagnostics {
     public abstract class DiagnosticCollection {
@@ -17,8 +19,15 @@ namespace Decuplr.Sourceberg.Diagnostics {
             public static IEqualityComparer<DiagnosticDescriptor> Instance { get; } = new DiagnosticById();
         }
 
-        private readonly ConcurrentDictionary<string, DiagnosticDescriptor?> _descriptorsDictionary = new ConcurrentDictionary<string, DiagnosticDescriptor?>();
-        
+        private readonly ConcurrentDictionary<string, DiagnosticDescriptor?> _methodDescriptorCache = new ConcurrentDictionary<string, DiagnosticDescriptor?>();
+        private readonly IReadOnlyDictionary<string, DiagnosticDescriptor> _diagnostics;
+        private readonly Lazy<DiagnosticGroupAttribute> _groupAttribute;
+
+        protected DiagnosticCollection() {
+            _groupAttribute = new Lazy<DiagnosticGroupAttribute>(() => GetType().GetCustomAttribute<DiagnosticGroupAttribute>(), LazyThreadSafetyMode.PublicationOnly);
+            _diagnostics = GetTypeDescriptors(GetType().GetTypeInfo()).ToDictionary(x => x.Id);
+        }
+
         internal static IReadOnlyCollection<DiagnosticDescriptor> GetDiagnosticDescriptors(IEnumerable<Assembly> assemblies) {
             var descriptorSet = new HashSet<DiagnosticDescriptor>(DiagnosticById.Instance);
             var assemblySet = new HashSet<Assembly>(assemblies);
@@ -38,25 +47,39 @@ namespace Decuplr.Sourceberg.Diagnostics {
             return descriptorSet;
         }
 
+        private static IEnumerable<DiagnosticDescriptor> GetTypeDescriptors(ReflectionTypeInfo type) {
+            if (!type.IsSubclassOf(typeof(DiagnosticCollection)))
+                return Enumerable.Empty<DiagnosticDescriptor>();
+            var groupAttribute = type.GetCustomAttribute<DiagnosticGroupAttribute>();
+            // Issue a warning!
+            if (groupAttribute is null)
+                return Enumerable.Empty<DiagnosticDescriptor>();
+            return type.DeclaredMembers.Where(x => x.MemberType == MemberTypes.Method)
+                                       .Select(x => GetMemberDescriptor(x, groupAttribute))
+                                       .WhereNotNull();
+        }
+
         private static DiagnosticDescriptor? GetMemberDescriptor(MemberInfo member, DiagnosticGroupAttribute groupAttribute) {
             var descript = member.GetCustomAttribute<DiagnosticDescriptionAttribute>();
             if (descript is null)
                 return null;
-            return new DiagnosticDescriptor($"{groupAttribute.CategoryName}{descript.Id}",
-                                               descript.Title,
-                                               descript.Description,
-                                               groupAttribute.CategoryName,
-                                               descript.Severity,
-                                               descript.EnableByDefault,
-                                               descript.LongDescription,
-                                               descript.HelpLinkUri,
-                                               descript.CustomTags);
+            return new DiagnosticDescriptor(GetStringId(groupAttribute, descript.Id),
+                                            descript.Title,
+                                            descript.Description,
+                                            groupAttribute.CategoryName,
+                                            descript.Severity,
+                                            descript.EnableByDefault,
+                                            descript.LongDescription,
+                                            descript.HelpLinkUri,
+                                            descript.CustomTags);
         }
+
+        private static string GetStringId(DiagnosticGroupAttribute groupAttribute, int id) => $"{groupAttribute.GroupPrefix}{id}";
 
         protected DiagnosticDescriptor GetDescriptor([CallerMemberName] string callingMethod = null!) {
             if (callingMethod is null)
                 throw new ArgumentNullException(nameof(callingMethod));
-            var descriptor = _descriptorsDictionary.GetOrAdd(callingMethod, GetDescriptor);
+            var descriptor = _methodDescriptorCache.GetOrAdd(callingMethod, GetDescriptor);
             if (descriptor is null)
                 throw new ArgumentException($"Method '{callingMethod}' doesn't contain definition for diagnostic descriptor.", nameof(callingMethod));
             return descriptor;
@@ -67,8 +90,15 @@ namespace Decuplr.Sourceberg.Diagnostics {
                     throw new ArgumentException($"Ambigous method name between {string.Join(", ", list.Select(x => $"'{x.Method.Name}'"))}. Unable to determinate which description to select");
                 if (list.Count < 1)
                     return null;
-                return GetMemberDescriptor(list[0].Method, GetType().GetCustomAttribute<DiagnosticGroupAttribute>());
+                return GetMemberDescriptor(list[0].Method, _groupAttribute.Value);
             }
+        }
+
+        protected DiagnosticDescriptor GetDescriptor(int id) {
+            var strId = GetStringId(_groupAttribute.Value, id);
+            if (_diagnostics.TryGetValue(strId, out var descriptor))
+                return descriptor;
+            throw new ArgumentOutOfRangeException(nameof(id), id, $"Descriptor ID {strId} doesn't exist in this instance.");
         }
     }
 }

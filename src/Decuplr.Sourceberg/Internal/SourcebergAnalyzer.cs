@@ -1,15 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using Decuplr.Sourceberg.Diagnostics;
 using Decuplr.Sourceberg.Generation;
-using Decuplr.Sourceberg.Services;
-using Decuplr.Sourceberg.Services.Implementation;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Decuplr.Sourceberg.Internal {
 
@@ -21,8 +16,8 @@ namespace Decuplr.Sourceberg.Internal {
 
         public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
 
-        public SourcebergAnalyzer(GeneratorStartup startup) 
-            : base (startup) {
+        public SourcebergAnalyzer(GeneratorStartup startup)
+            : base(startup) {
             var set = SymbolActionGroups.SelectMany(x => x.Group.Analyzers.Select(x => x.AnalyzerType))
                                         .Concat(SyntaxActionGroups.SelectMany(x => x.Group.Analyzers.Select(x => x.AnalyzerType)))
                                         .ToImmutableHashSet();
@@ -57,7 +52,7 @@ namespace Decuplr.Sourceberg.Internal {
                     foreach (var reportedDiagnostic in reportedDiagnostics)
                         syntaxContext.ReportDiagnostic(reportedDiagnostic);
 
-                    SyntaxNodeAnalysisContextSource GetNextContext(SyntaxNode nextSyntax, bool isEntryPoint) 
+                    SyntaxNodeAnalysisContextSource GetNextContext(SyntaxNode nextSyntax, bool isEntryPoint)
                         => isEntryPoint
                            ? SyntaxNodeAnalysisContextSource.FromContextSource(syntaxContext)
                            : SyntaxNodeAnalysisContextSource.FromInherit(nextSyntax, syntaxContext);
