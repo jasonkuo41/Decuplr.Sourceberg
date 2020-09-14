@@ -8,7 +8,5 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         public DiagnosticGroupAttribute GroupAttribute { get; set; }
 
         public IReadOnlyDictionary<ISymbol, DiagnosticDescriptionAttribute> DescriptorSymbols { get; set; }
-
-        public IMethodSymbol? StaticInitializerName { get; set; }
     }
 }

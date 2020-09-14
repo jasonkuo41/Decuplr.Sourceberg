@@ -69,7 +69,6 @@ namespace {symbol.ContainingNamespace} {{
         {dontShow}
         static {symbol.Name}() {{
             {staticCtor}
-            {(info.StaticInitializerName is null ? "" : $"{info.StaticInitializerName.Name}()")}
         }}
 
         {generatedCode}
@@ -155,7 +154,7 @@ namespace {symbol.ContainingNamespace} {{
                 }
                 if (symbol.StaticConstructors.Any()) {
                     // DIAGNOSTIC: about static constructors being present (not allowed), instead StaticInitializer method would be used.
-                    context.ReportDiagnostic(DiagnosticSource.RemoveStaticConstructor(symbol.StaticConstructors[0], "StaticInitializer"));
+                    context.ReportDiagnostic(DiagnosticSource.RemoveStaticConstructor(symbol.StaticConstructors[0]));
                     continue;
                 }
                 var members = new Dictionary<ISymbol, DiagnosticDescriptionAttribute>();
@@ -205,11 +204,8 @@ namespace {symbol.ContainingNamespace} {{
                     FormattingString = groupAttributeData.GetNamedArgSingleValue(nameof(DiagnosticGroupAttribute.FormattingString), "0000").AssertNotNull()
                 };
 
-                // static initializer should not have 
-
                 var diagnosticInfo = new DiagnosticTypeInfo {
                     ContainingSymbol = symbol,
-                    StaticInitializerName = symbol.GetMembers("StaticInitializer").FirstOrDefault() as IMethodSymbol,
                     GroupAttribute = groupAttribute,
                     DescriptorSymbols = members
                 };

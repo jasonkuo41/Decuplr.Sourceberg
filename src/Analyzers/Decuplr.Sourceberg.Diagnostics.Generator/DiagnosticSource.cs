@@ -24,7 +24,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         internal static DiagnosticDescriptor TypeWithDiagnosticGroupShouldNotContainStaticCtor { get; }
             = new DiagnosticDescriptor("SRG0102",
                 "Type marked with DiagnosticGroupAttribute should not contain static constructor",
-                "Type '{0}' is marked with DiagnosticGroupAttribute and shoul not contain static constructor, instead create a static method '{1}' that returns void for initialization.",
+                "Type '{0}' is marked with DiagnosticGroupAttribute and should not contain static constructor.",
                 Cat, DiagnosticSeverity.Error, true);
 
         internal static DiagnosticDescriptor MemberWithDescriptionShouldBeStatic { get; }
@@ -46,8 +46,8 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         public static Diagnostic MissingPartialForType(ITypeSymbol missingType)
             => Diagnostic.Create(TypeWithDiagnosticGroupShouldBePartial, missingType.Locations[0], missingType.Locations.Skip(1), missingType);
 
-        public static Diagnostic RemoveStaticConstructor(IMethodSymbol ctor, string methodName)
-            => Diagnostic.Create(TypeWithDiagnosticGroupShouldNotContainStaticCtor, ctor.Locations[0], ctor.ContainingType, methodName);
+        public static Diagnostic RemoveStaticConstructor(IMethodSymbol ctor)
+            => Diagnostic.Create(TypeWithDiagnosticGroupShouldNotContainStaticCtor, ctor.Locations[0], ctor.ContainingType);
 
         public static Diagnostic MemberShouldBeStatic(ISymbol member)
             => Diagnostic.Create(MemberWithDescriptionShouldBeStatic, member.Locations[0], member);
