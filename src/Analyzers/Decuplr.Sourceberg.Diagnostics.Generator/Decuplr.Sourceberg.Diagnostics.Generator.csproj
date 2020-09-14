@@ -22,6 +22,7 @@
 		<Compile Include="..\..\Common\ObjectAssertExtensions.cs" Link="Common\ObjectAssertExtensions.cs" />
 		<Compile Include="..\..\Common\RoslynSymbolExtensions.cs" Link="Common\RoslynSymbolExtensions.cs" />
 		<Compile Include="..\..\Common\ReflectionTypeSymbolLocator.cs" Link="Common\ReflectionTypeSymbolLocator.cs" />
+		<Compile Include="..\..\Common\ReflectionTypeExtensions.cs" Link="Common\ReflectionTypeExtensions.cs" />
 	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->

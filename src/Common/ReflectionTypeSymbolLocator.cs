@@ -35,7 +35,7 @@ namespace Decuplr.Sourceberg {
         private ITypeSymbol? GetGenericNonDefinitionType(Type type) {
             Debug.Assert(type.IsGenericType);
             Debug.Assert(!type.IsGenericTypeDefinition);
-            var allTypes = type.GetAllDeclaringTypes().ToList();
+            var allTypes = type.GetDeclaringTypes().ToList();
             var arities = type.GetArities();
             allTypes.Add(type);
 
@@ -89,4 +89,5 @@ namespace Decuplr.Sourceberg {
 
         public ITypeSymbol? GetTypeSymbol<T>() => GetTypeSymbol(typeof(T));
     }
+
 }

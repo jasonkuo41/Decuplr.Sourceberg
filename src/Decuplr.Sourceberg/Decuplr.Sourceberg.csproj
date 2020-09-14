@@ -6,7 +6,6 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Version>0.0.1</Version>
-		<_SourceGenerator>Decuplr.Sourceberg.Generator</_SourceGenerator>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,11 +21,15 @@
 		<Compile Include="..\Common\StringExtensions.cs" Link="Common\StringExtensions.cs" />
 		<Compile Include="..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
 		<Compile Include="..\Common\ReflectionTypeSymbolLocator.cs" Link="Common\ReflectionTypeSymbolLocator.cs" />
+		<Compile Include="..\Common\ReflectionTypeExtensions.cs" Link="Common\ReflectionTypeExtensions.cs" />
 	</ItemGroup>
 
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
+	<PropertyGroup>
+		<_SourceGenerator>Decuplr.Sourceberg.Generator</_SourceGenerator>
+	</PropertyGroup>
 	<ItemGroup>
-		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\$(_SourceGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>

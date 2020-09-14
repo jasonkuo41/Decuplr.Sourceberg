@@ -26,4 +26,12 @@
 		<Compile Include="..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
 	</ItemGroup>
 
+	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
+	<PropertyGroup>
+		<_SourceGenerator>Decuplr.Sourceberg.Diagnostics.Generator</_SourceGenerator>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\$(_SourceGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+	
 </Project>
