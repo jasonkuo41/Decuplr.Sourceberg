@@ -87,5 +87,6 @@ namespace Decuplr.Sourceberg {
             return symbol;
         }
 
+        public ITypeSymbol? GetTypeSymbol<T>() => GetTypeSymbol(typeof(T));
     }
 }
