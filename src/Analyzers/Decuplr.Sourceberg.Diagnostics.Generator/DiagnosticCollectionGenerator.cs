@@ -107,12 +107,17 @@ namespace {symbol.ContainingNamespace} {{
         public void Execute(SourceGeneratorContext context) {
             if (!(context.SyntaxReceiver is SyntaxCapture capture))
                 return;
-            if (!DiagnosticGroupProvider.TryGetProvider(context, out var provider))
-                return;
-            foreach (var diagnosticType in provider.GetDiagnosticTypeInfo(capture.CapturedSyntaxes)) {
-                var code = GenerateDiagnosticGroupCode(diagnosticType);
-                var sourceText = SourceText.From(code, Encoding.UTF8);
-                context.AddSource($"{diagnosticType.ContainingSymbol}.diagnostics.generated", sourceText);
+            try {
+                if (!DiagnosticGroupProvider.TryGetProvider(context, out var provider))
+                    return;
+                foreach (var diagnosticType in provider.GetDiagnosticTypeInfo(capture.CapturedSyntaxes)) {
+                    var code = GenerateDiagnosticGroupCode(diagnosticType);
+                    var sourceText = SourceText.From(code, Encoding.UTF8);
+                    context.AddSource($"{diagnosticType.ContainingSymbol}.diagnostics.generated", sourceText);
+                }
+            } 
+            catch (Exception e) {
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("SRGException", "Internal Exception", "An internal exception '{0}' has occured : {1}", "Internal", DiagnosticSeverity.Warning, true), Location.None, e.GetType(), e));
             }
         }
 
