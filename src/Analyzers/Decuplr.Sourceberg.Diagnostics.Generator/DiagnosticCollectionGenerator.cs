@@ -38,16 +38,23 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
 
             var exportName = $"__generated_yield_collection";
             var dontShow = "[EditorBrowsable(EditorBrowsableState.Never)]";
-            var generatedCode = $"[GeneratedCode({typeof(DiagnosticCollectionGenerator).FullName}, {typeof(DiagnosticCollectionGenerator).Assembly.GetName().Version})]";
+            var generatedCode = $"[GeneratedCode(\"{typeof(DiagnosticCollectionGenerator).FullName}\", \"{typeof(DiagnosticCollectionGenerator).Assembly.GetName().Version}\")]";
 
             var staticCtor = new StringBuilder();
             staticCtor.Append($"var list = new List<DiagnosticDescriptor>({descriptorSymbols.Count});");
             foreach (var (containingSymbol, descriptor) in descriptorSymbols) {
-                IEnumerable<object?> passingArguments = new object?[] { descriptor.Id, descriptor.Title, descriptor.Description,
-                                                                        group.CategoryName, descriptor.EnableByDefault,
+                IEnumerable<object?> passingArguments = new object?[] { $"{group.GroupPrefix}{descriptor.Id}", descriptor.Title, descriptor.Description,
+                                                                        group.CategoryName, descriptor.Severity, descriptor.EnableByDefault,
                                                                         descriptor.LongDescription, descriptor.HelpLinkUri };
+                passingArguments = passingArguments.WhereNotNull().Select(x => x switch
+                {
+                    string str => $"\"{x}\"",
+                    bool b => b.ToString().ToLower(),
+                    DiagnosticSeverity ds => $"{nameof(DiagnosticSeverity)}.{ds}",
+                    _ => x.ToString()
+                });
                 passingArguments = passingArguments.Concat(descriptor.CustomTags ?? Array.Empty<string>());
-                staticCtor.AppendLine($"{containingSymbol.Name} = new {nameof(DiagnosticDescriptor)}({string.Join(", ", passingArguments)});");
+                staticCtor.AppendLine($"{containingSymbol.Name} = new {nameof(DiagnosticDescriptor)}({string.Join(", ", passingArguments.WhereNotNull())});");
                 staticCtor.AppendLine($"list.Add({containingSymbol.Name});");
             }
             staticCtor.AppendLine($"{exportName} = list;");
@@ -59,10 +66,11 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
+using Decuplr.Sourceberg.Diagnostics.Internal;
 
 namespace {symbol.ContainingNamespace} {{
     
-    [{nameof(ExportDiagnosticDescriptorMethodAttribute)}({exportName})]
+    [{nameof(ExportDiagnosticDescriptorMethodAttribute)}(""{exportName}"")]
     {GetDisplayAccessibility(symbol)} {(symbol.IsStatic ? "static" : null)} partial {GetTypeKind(symbol)} {symbol.Name} {{
 
         {generatedCode}
@@ -73,7 +81,7 @@ namespace {symbol.ContainingNamespace} {{
 
         {generatedCode}
         {dontShow}
-        internal static IEnumerable<DiangosticDescriptor> {exportName} {{ get; }}
+        internal static IEnumerable<DiagnosticDescriptor> {exportName} {{ get; }}
 
     }}
 
@@ -105,9 +113,9 @@ namespace {symbol.ContainingNamespace} {{
         }
 
         public void Execute(SourceGeneratorContext context) {
-            if (!(context.SyntaxReceiver is SyntaxCapture capture))
-                return;
             try {
+                if (!(context.SyntaxReceiver is SyntaxCapture capture))
+                    return;
                 if (!DiagnosticGroupProvider.TryGetProvider(context, out var provider))
                     return;
                 foreach (var diagnosticType in provider.GetDiagnosticTypeInfo(capture.CapturedSyntaxes)) {

@@ -126,12 +126,12 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                 EnableByDefault = memberAttribute.GetNamedArgSingleValue(nameof(DiagnosticDescriptionAttribute.EnableByDefault), true),
                 LongDescription = memberAttribute.GetNamedArgSingleValue<string>(nameof(DiagnosticDescriptionAttribute.LongDescription), null),
                 HelpLinkUri = memberAttribute.GetNamedArgSingleValue<string>(nameof(DiagnosticDescriptionAttribute.HelpLinkUri), null),
-                CustomTags = memberAttribute.GetNamedArgArrayValue<string>(nameof(DiagnosticDescriptionAttribute.CustomTags), null)
+                CustomTags = memberAttribute.GetNamedArgSingleValue<string[]>(nameof(DiagnosticDescriptionAttribute.CustomTags), null)
             };
             return true;
         }
 
-        private IReadOnlyDictionary<ISymbol, DiagnosticDescriptionAttribute> GetDescribedMembers(INamedTypeSymbol symbol) {
+        private IReadOnlyDictionary<ISymbol, DiagnosticDescriptionAttribute>? GetDescribedMembers(INamedTypeSymbol symbol) {
             var lookup = new Dictionary<ISymbol, DiagnosticDescriptionAttribute>();
             foreach(var member in symbol.GetMembers()) {
                 var memberAttribute = member.GetAttributes().FirstOrDefault(x => x.AttributeClass?.Equals(_descriptionAttribute, SymbolEqualityComparer.Default) ?? false);
@@ -141,16 +141,16 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                 if (!member.IsStatic) {
                     // DIAGNOSTIC: about being static
                     _context.ReportDiagnostic(DiagnosticSource.MemberShouldBeStatic(member));
-                    continue;
+                    return null;
                 }
                 var returnSymbol = GetReturnType(member);
                 if (!GetReturnType(member).Equals(_descriptor, SymbolEqualityComparer.Default)) {
                     // DIAGNOSTIC: about not returning the correct type
                     _context.ReportDiagnostic(DiagnosticSource.MemberShouldReturnDescriptor(symbol, returnSymbol));
-                    continue;
+                    return null;
                 }
                 if (!TryGetDescriptionAttribute(member, out var attribute))
-                    continue;
+                    return null;
                 lookup.Add(member, attribute);
             }
             return lookup;
@@ -175,10 +175,14 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                 if (!TryGetDiagnosticGroupAttribute(symbol, out var groupAttribute))
                     continue;
 
+                var memberDescriptors = GetDescribedMembers(symbol);
+                if (memberDescriptors is null)
+                    continue;
+
                 var diagnosticInfo = new DiagnosticTypeInfo {
                     ContainingSymbol = symbol,
                     GroupAttribute = groupAttribute,
-                    DescriptorSymbols = GetDescribedMembers(symbol)
+                    DescriptorSymbols = memberDescriptors
                 };
                 result.Add(diagnosticInfo);
             }

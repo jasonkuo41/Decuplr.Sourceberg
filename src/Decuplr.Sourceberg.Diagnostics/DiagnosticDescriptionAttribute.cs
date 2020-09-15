@@ -28,5 +28,17 @@ namespace Decuplr.Sourceberg.Diagnostics {
         public string? HelpLinkUri { get; set; }
 
         public string[]? CustomTags { get; set; }
+
+        internal DiagnosticDescriptor GetDescriptor(DiagnosticGroupAttribute groupAttribute) {
+            return new DiagnosticDescriptor($"{groupAttribute.GroupPrefix}{Id.ToString(groupAttribute.FormattingString)}",
+                                            Title,
+                                            Description,
+                                            groupAttribute.CategoryName,
+                                            Severity,
+                                            EnableByDefault,
+                                            LongDescription,
+                                            HelpLinkUri,
+                                            CustomTags);
+        }
     }
 }

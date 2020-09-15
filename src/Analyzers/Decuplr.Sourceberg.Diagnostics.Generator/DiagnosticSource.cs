@@ -9,14 +9,20 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
 
         internal const string Cat = "Sourceberg.Diagnostics";
 
+        internal const string c_AttributeCtorNoNull = "SRG0100";
+        internal const string c_TypeWithDiagnosticGroupShouldBePartial = "SRG0101";
+        internal const string c_TypeWithDiagnosticGroupShouldNotContainStaticCtor = "SRG0102";
+        internal const string c_MemberWithDescriptionShouldBeStatic = "SRG0103";
+        internal const string c_MemberWithDescriptionShouldReturnDescriptor = "SRG0104";
+
         internal static DiagnosticDescriptor AttributeCtorNoNull { get; }
-            = new DiagnosticDescriptor("SRG0100",
+            = new DiagnosticDescriptor(c_AttributeCtorNoNull,
                 "Designated attribute prohibits null as it's constructor argument.",
                 "Attribute '{0}' doesn't allow null value with constructor argument '{1}' at position {2}.",
                 Cat, DiagnosticSeverity.Error, true);
 
         internal static DiagnosticDescriptor TypeWithDiagnosticGroupShouldBePartial { get; }
-            = new DiagnosticDescriptor("SRG0101",
+            = new DiagnosticDescriptor(c_TypeWithDiagnosticGroupShouldBePartial,
                 "Type marked with DiagnosticGroupAttribute should be partial",
                 "Type '{0}' is marked with DiagnosticGroupAttribute and should be partial.",
                 Cat, DiagnosticSeverity.Error, true);
@@ -53,6 +59,6 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             => Diagnostic.Create(MemberWithDescriptionShouldBeStatic, member.Locations[0], member);
 
         public static Diagnostic MemberShouldReturnDescriptor(ISymbol member, ISymbol returnSymbol)
-            => Diagnostic.Create(MemberWithDescriptionShouldReturnDescriptor, returnSymbol.Locations[0], member.Locations, member, returnSymbol);
+            => Diagnostic.Create(MemberWithDescriptionShouldReturnDescriptor, member.Locations[0], member.Locations.Skip(1), member, returnSymbol);
     }
 }
