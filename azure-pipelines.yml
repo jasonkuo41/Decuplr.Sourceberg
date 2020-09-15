@@ -28,7 +28,12 @@ steps:
   inputs:
     command: 'test'
     projects: '**/test/**/*.csproj'
-    
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/Decuplr.Sourceberg/**/site/cobertura/coverage.xml'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
