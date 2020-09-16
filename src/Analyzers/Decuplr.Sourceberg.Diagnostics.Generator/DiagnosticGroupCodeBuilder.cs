@@ -65,7 +65,7 @@ namespace {symbol.ContainingNamespace} {{
             return contextCode;
         }
 
-        private static string GetDisplayAccessibility(INamedTypeSymbol symbol) => symbol.DeclaredAccessibility switch
+        private static string GetDisplayAccessibility(ITypeSymbol symbol) => symbol.DeclaredAccessibility switch
         {
             Accessibility.Public => "public",
             Accessibility.Internal => "internal",
@@ -76,7 +76,7 @@ namespace {symbol.ContainingNamespace} {{
             _ => throw new ArgumentException($"{symbol.DeclaredAccessibility} is not a valid accessibility for this term.")
         };
 
-        private static string GetTypeKind(INamedTypeSymbol symbol) => symbol.TypeKind switch
+        private static string GetTypeKind(ITypeSymbol symbol) => symbol.TypeKind switch
         {
             TypeKind.Class => "class",
             TypeKind.Struct => "struct",

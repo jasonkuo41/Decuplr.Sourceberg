@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,12 +33,27 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             try {
                 if (!(context.SyntaxReceiver is SyntaxCapture capture))
                     return;
-                if (!DiagnosticGroupAnalysis.TryGetAnalysis(context, out var analysis))
+                var locator = new ReflectionTypeSymbolLocator(context.Compilation);
+                if (!DiagnosticGroupTypeAnalysis.TryGetAnalysis(locator, context.CancellationToken, out var typeAnalysis))
+                    return; 
+                if (!DiagnosticMemberTypeAnalysis.TryGetAnalysis(locator, context.CancellationToken, out var memberAnalysis))
                     return;
-                foreach (var diagnosticType in analysis.GetDiagnosticTypeInfo(capture.CapturedSyntaxes)) {
-                    var code = DiagnosticGroupCodeBuilder.Generate(diagnosticType);
+                foreach (var (type, typeAttr) in typeAnalysis.GatherValidTypes(capture.CapturedSyntaxes, context.ReportDiagnostic)) {
+                    var members = type.GetMembers()
+                                      .Select(member => (member, Attribute: memberAnalysis.GetMemberSymbolAttribute(member, context.ReportDiagnostic)))
+                                      .Where(member => member.Attribute is { })
+                                      .ToDictionary(x => x.member, x => x.Attribute);
+                    if (members.Count == 0) {
+                        // DIAG : Warn no member, generation will not procede
+                        continue;
+                    }
+                    var code = DiagnosticGroupCodeBuilder.Generate(new DiagnosticTypeInfo { 
+                        ContainingSymbol = type,
+                        GroupAttribute = typeAttr,
+                        DescriptorSymbols = members!
+                    });
                     var sourceText = SourceText.From(code, Encoding.UTF8);
-                    context.AddSource($"{diagnosticType.ContainingSymbol}.diagnostics.generated", sourceText);
+                    context.AddSource($"{type}.diagnostics.generated", sourceText);
                 }
             }
             catch (Exception e) {

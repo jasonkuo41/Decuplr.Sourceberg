@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Decuplr.Sourceberg.Diagnostics.Generator {
     internal struct DiagnosticTypeInfo {
-        public INamedTypeSymbol ContainingSymbol { get; set; }
+        public ITypeSymbol ContainingSymbol { get; set; }
 
         public DiagnosticGroupAttribute GroupAttribute { get; set; }
 

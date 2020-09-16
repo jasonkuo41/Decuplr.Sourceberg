@@ -5,14 +5,27 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Decuplr.Sourceberg {
-    internal class ReflectionTypeSymbolLocator {
 
-        private readonly Compilation _compilation;
+    internal static class SymbolLocatorExtensions {
+        public static bool Equals<T>(this ITypeSymbol? symbol, ReflectionTypeSymbolLocator locator, SymbolEqualityComparer? comparer = null) {
+            comparer ??= SymbolEqualityComparer.Default;
+            if (symbol is null)
+                return false;
+            var target = locator.GetTypeSymbol<T>();
+            if (target is null)
+                return false;
+            return symbol.Equals(target, comparer);
+        }
+    }
+
+    internal class ReflectionTypeSymbolLocator {
         private readonly Dictionary<Type, IAssemblySymbol?> _typeAssemblyCache = new Dictionary<Type, IAssemblySymbol?>();
         private readonly Dictionary<Type, ITypeSymbol?> _typeSymbolCache = new Dictionary<Type, ITypeSymbol?>();
 
+        public Compilation Compilation { get; }
+
         public ReflectionTypeSymbolLocator(Compilation compilation) {
-            _compilation = compilation;
+            Compilation = compilation;
         }
 
         private ITypeSymbol? GetArraySymbol(Type type) {
@@ -21,7 +34,7 @@ namespace Decuplr.Sourceberg {
             var rank = type.GetArrayRank();
             if (elementSymbol is null)
                 return null;
-            return _compilation.CreateArrayTypeSymbol(elementSymbol, rank);
+            return Compilation.CreateArrayTypeSymbol(elementSymbol, rank);
         }
 
         private ITypeSymbol? GetPointerSymbol(Type type) {
@@ -29,7 +42,7 @@ namespace Decuplr.Sourceberg {
             var elementSymbol = GetTypeSymbol(type.GetElementType());
             if (elementSymbol is null)
                 return null;
-            return _compilation.CreatePointerTypeSymbol(elementSymbol);
+            return Compilation.CreatePointerTypeSymbol(elementSymbol);
         }
 
         private ITypeSymbol? GetGenericNonDefinitionType(Type type) {
@@ -72,7 +85,7 @@ namespace Decuplr.Sourceberg {
                 return symbol;
 
             var typeAssemblyId = AssemblyIdentity.FromAssemblyDefinition(type.Assembly);
-            var queryResult = _compilation.References.Select(reference => _compilation.GetAssemblyOrModuleSymbol(reference))
+            var queryResult = Compilation.References.Select(reference => Compilation.GetAssemblyOrModuleSymbol(reference))
                                                  .FirstOrDefault(x => x is IAssemblySymbol asmSymbol && asmSymbol.Identity.Equals(typeAssemblyId));
             var assembly = queryResult as IAssemblySymbol;
             _typeAssemblyCache[type] = assembly;

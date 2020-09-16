@@ -14,6 +14,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         internal const string c_TypeWithDiagnosticGroupShouldNotContainStaticCtor = "SRG0102";
         internal const string c_MemberWithDescriptionShouldBeStatic = "SRG0103";
         internal const string c_MemberWithDescriptionShouldReturnDescriptor = "SRG0104";
+        internal const string c_MemberWithDescriptionNotInGroup = "SRG0105";
 
         internal static DiagnosticDescriptor AttributeCtorNoNull { get; }
             = new DiagnosticDescriptor(c_AttributeCtorNoNull,
@@ -28,22 +29,28 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                 Cat, DiagnosticSeverity.Error, true);
 
         internal static DiagnosticDescriptor TypeWithDiagnosticGroupShouldNotContainStaticCtor { get; }
-            = new DiagnosticDescriptor("SRG0102",
-                "Type marked with DiagnosticGroupAttribute should not contain static constructor",
+            = new DiagnosticDescriptor(c_TypeWithDiagnosticGroupShouldNotContainStaticCtor,
+                "Type marked with DiagnosticGroupAttribute should not contain static constructor.",
                 "Type '{0}' is marked with DiagnosticGroupAttribute and should not contain static constructor.",
                 Cat, DiagnosticSeverity.Error, true);
 
         internal static DiagnosticDescriptor MemberWithDescriptionShouldBeStatic { get; }
-            = new DiagnosticDescriptor("SRG0103",
-                "Type member marked with DiagnosticDescriptionAttribute should be static",
-                "Type member '{0}' is marked with DiagnosticDescriptionAttribute and should be a static member",
+            = new DiagnosticDescriptor(c_MemberWithDescriptionShouldBeStatic,
+                "Type member marked with DiagnosticDescriptionAttribute should be static.",
+                "Type member '{0}' is marked with DiagnosticDescriptionAttribute and should be a static member.",
                 Cat, DiagnosticSeverity.Error, true);
 
         internal static DiagnosticDescriptor MemberWithDescriptionShouldReturnDescriptor { get; }
-            = new DiagnosticDescriptor("SRG0104",
-                "Type member marked with DiagnosticDescriptionAttribute should return DiangosticDescriptor",
-                "Type member '{0}' is marked with DiagnosticDescriptionAttribute and should return DiagnosticDescriptor instead of '{1}'",
+            = new DiagnosticDescriptor(c_MemberWithDescriptionShouldReturnDescriptor,
+                "Type member marked with DiagnosticDescriptionAttribute should return DiangosticDescriptor.",
+                "Type member '{0}' is marked with DiagnosticDescriptionAttribute and should return DiagnosticDescriptor instead of '{1}'.",
                 Cat, DiagnosticSeverity.Error, true);
+
+        internal static DiagnosticDescriptor MemberWithDescriptionShouldBeInGroup { get; }
+            = new DiagnosticDescriptor(c_MemberWithDescriptionNotInGroup,
+                "Type member marked with DiagnosticDescriptionAttribute has no meaning without DiagnosticGroupAttribute.",
+                "Type member '{0}' with be ignored for compilation because it's containing type '{1}' is not marked with DiagnosticGroupAttribute.",
+                Cat, DiagnosticSeverity.Warning, true);
 
 
         public static Diagnostic AttributeConstructorArgumentCannotBeNull(ITypeSymbol attSymbol, string argName, int position, Location location)
@@ -60,5 +67,8 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
 
         public static Diagnostic MemberShouldReturnDescriptor(ISymbol member, ISymbol returnSymbol)
             => Diagnostic.Create(MemberWithDescriptionShouldReturnDescriptor, member.Locations[0], member.Locations.Skip(1), member, returnSymbol);
+
+        public static Diagnostic MemberShouldBeInGroup(ISymbol member, Location? attributeLocation)
+            => Diagnostic.Create(MemberWithDescriptionShouldBeInGroup, attributeLocation ?? member.Locations[0], member, member.ContainingType);
     }
 }
