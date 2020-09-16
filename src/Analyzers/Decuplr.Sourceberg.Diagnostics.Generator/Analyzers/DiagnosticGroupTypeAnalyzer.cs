@@ -24,7 +24,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Analyzers {
                 if (!(context.Symbol is INamedTypeSymbol namedTypeSymbol))
                     return;
                 var locator = new ReflectionTypeSymbolLocator(context.Compilation);
-                if (context.Symbol.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(locator)))
+                if (!context.Symbol.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(locator)))
                     return;
                 if (!DiagnosticGroupTypeAnalysis.TryGetAnalysis(locator, context.CancellationToken, out var typeAnalysis))
                     return;

@@ -26,7 +26,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Analyzers {
                     return;
                 if (!(context.Symbol.ContainingType is INamedTypeSymbol hostingType))
                     return;
-                if (hostingType.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(locator))) {
+                if (!hostingType.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(locator))) {
                     // report diagnostic on how the diagnostic group is missing
                     var memberAttrLocation = memberAttr.ApplicationSyntaxReference.GetSyntax(context.CancellationToken).GetLocation();
                     context.ReportDiagnostic(DiagnosticSource.MemberShouldBeInGroup(context.Symbol, memberAttrLocation));
