@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Decuplr.Sourceberg.Diagnostics.Generator {
-    class DiagnosticGroupProvider {
+    class DiagnosticGroupAnalysis {
 
         private readonly SourceGeneratorContext _context;
         private readonly ReflectionTypeSymbolLocator _symbolLocator;
@@ -18,7 +18,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         private readonly INamedTypeSymbol _groupAttribute;
         private readonly INamedTypeSymbol _descriptor;
 
-        private DiagnosticGroupProvider(SourceGeneratorContext generatorContext,
+        private DiagnosticGroupAnalysis(SourceGeneratorContext generatorContext,
                                         ReflectionTypeSymbolLocator symbolLocator,
                                         INamedTypeSymbol descriptionAttribute,
                                         INamedTypeSymbol groupAttribute,
@@ -30,16 +30,16 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             _descriptor = descriptor;
         }
 
-        public static bool TryGetProvider(SourceGeneratorContext context, [NotNullWhen(true)] out DiagnosticGroupProvider? provider) {
+        public static bool TryGetAnalysis(SourceGeneratorContext context, [NotNullWhen(true)] out DiagnosticGroupAnalysis? analysis) {
             var symbolLocator = new ReflectionTypeSymbolLocator(context.Compilation);
             var descriptionSymbol = symbolLocator.GetTypeSymbol<DiagnosticDescriptionAttribute>() as INamedTypeSymbol;
             var groupSymbol = symbolLocator.GetTypeSymbol<DiagnosticGroupAttribute>() as INamedTypeSymbol;
             var ddSymbol = symbolLocator.GetTypeSymbol<DiagnosticDescriptor>() as INamedTypeSymbol;
             if (descriptionSymbol is null || groupSymbol is null || ddSymbol is null) {
-                provider = null;
+                analysis = null;
                 return false;
             }
-            provider = new DiagnosticGroupProvider(context, symbolLocator, descriptionSymbol, groupSymbol, ddSymbol);
+            analysis = new DiagnosticGroupAnalysis(context, symbolLocator, descriptionSymbol, groupSymbol, ddSymbol);
             return true;
         }
 

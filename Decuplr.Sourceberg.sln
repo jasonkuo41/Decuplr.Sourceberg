@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnost
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{E212A2E9-D5C0-47B4-A379-F3411741F1C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Decuplr.Sourceberg.Diagnostics.Generator.Tests", "test\Decuplr.Sourceberg.Diagnostics.Generator.Tests\Decuplr.Sourceberg.Diagnostics.Generator.Tests.csproj", "{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnostics.Generator.Tests", "test\Decuplr.Sourceberg.Diagnostics.Generator.Tests\Decuplr.Sourceberg.Diagnostics.Generator.Tests.csproj", "{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.TestUtilities", "test\Decuplr.Sourceberg.TestUtilities\Decuplr.Sourceberg.TestUtilities.csproj", "{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53}"
 EndProject

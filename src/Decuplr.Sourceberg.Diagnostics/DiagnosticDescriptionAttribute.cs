@@ -38,7 +38,7 @@ namespace Decuplr.Sourceberg.Diagnostics {
                                             EnableByDefault,
                                             LongDescription,
                                             HelpLinkUri,
-                                            CustomTags);
+                                            CustomTags ?? Array.Empty<string>());
         }
     }
 }

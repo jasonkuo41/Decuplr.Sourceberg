@@ -1,5 +1,6 @@
 using System;
 using System.CodeDom.Compiler;
+using System.Linq;
 using Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCases;
 using Decuplr.Sourceberg.TestUtilities;
 using Microsoft.CodeAnalysis;
@@ -40,9 +41,22 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
                       .AssertDiagnosticCount(1, new DiagnosticMatch { Id = diagnosticId, StartLocation = (line, chara) });
         }
 
+        [Fact]
+        public void InvalidType_Locator_ShouldThrow() {
+            Assert.Throws<ArgumentException>(() => DescriptorLocator.FromType<string>());
+        }
+
         [Theory]
         [InlineData("TestCases/CorrectTypeSingleProperty", typeof(CorrectTypeSingleProperty))]
         [InlineData("TestCases/CorrectTypeSingleField", typeof(CorrectTypeSingleField))]
-        public void CorrectlySetupTypeTest(string filePath, Type type) => AssertDiagnosticGeneration.FromType(type, _generator, filePath, _output).AssertAll();
+        [InlineData("TestCases/CorrectTypeMultipleProperty", typeof(CorrectTypeMultipleProperty))]
+        public void CorrectlySetupTypeTest(string filePath, Type type) {
+            var generated = AssertDiagnosticGeneration.FromType(type, _generator, filePath, _output);
+            var expected = generated.AssertAll().ToHashSet();
+            var actual = DescriptorLocator.FromType(generated.Generated.GetType());
+            Assert.All(actual, item => Assert.Contains(item, expected));
+        }
+
+
     }
 }
