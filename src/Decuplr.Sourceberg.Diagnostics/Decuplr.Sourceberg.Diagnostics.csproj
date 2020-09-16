@@ -32,7 +32,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\$(_SourceGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(OutputPath)\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 	
 </Project>
