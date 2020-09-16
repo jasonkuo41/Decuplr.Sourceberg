@@ -13,9 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Decuplr.Sourceberg.Diagnostics\Decuplr.Sourceberg.Diagnostics.csproj">
-			<PackagePath>lib</PackagePath>
-		</ProjectReference>
+		<ProjectReference Include="..\..\Decuplr.Sourceberg.Diagnostics\Decuplr.Sourceberg.Diagnostics.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,3 +32,4 @@
 	</PropertyGroup>
 
 </Project>
+
