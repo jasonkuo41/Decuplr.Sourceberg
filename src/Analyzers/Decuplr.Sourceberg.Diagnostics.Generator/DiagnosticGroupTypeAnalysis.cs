@@ -58,7 +58,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             return symbols;
         }
 
-        private DiagnosticGroupAttribute? GetDiagnosticGroupAttribute(INamedTypeSymbol symbol, DiagnosticCollection diagnostics) {
+        private DiagnosticGroupAttribute? GetDiagnosticGroupAttribute(INamedTypeSymbol symbol, DiagnosticReporter diagnostics) {
             var groupAttributeData = symbol.GetAttributes().First(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(_locator));
             var success = true;
             success &= groupAttributeData.EnsureNotNull<string>("groupPrefix", 0, diagnostics.Add, _ct, out var prefix);
@@ -72,7 +72,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         }
 
         private DiagnosticGroupAttribute? VerifyType(INamedTypeSymbol symbol, IEnumerable<TypeDeclarationSyntax> declarations, Action<Diagnostic> reportDiagnostic) {
-            var diagnostics = new DiagnosticCollection(reportDiagnostic);
+            var diagnostics = new DiagnosticReporter(reportDiagnostic);
             if (!declarations.Any(x => x.Modifiers.Any(x => x.Kind() == SyntaxKind.PartialKeyword))) {
                 // DIAGNOSTIC: about no partial
                 diagnostics.Add(DiagnosticSource.MissingPartialForType(symbol));

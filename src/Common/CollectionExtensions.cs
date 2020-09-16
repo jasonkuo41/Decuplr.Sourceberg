@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Decuplr {
     internal static class CollectionExtensions {
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> addFactory) {
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> addFactory) where TKey : notnull {
             if (dict.TryGetValue(key, out var value))
                 return value;
             value = addFactory(key);
@@ -12,7 +12,7 @@ namespace Decuplr {
             return value;
         }
 
-        public static int RemoveWhere<TKey, TValue>(this IDictionary<TKey, TValue> dict, Func<KeyValuePair<TKey, TValue>, bool> predicate) {
+        public static int RemoveWhere<TKey, TValue>(this IDictionary<TKey, TValue> dict, Func<KeyValuePair<TKey, TValue>, bool> predicate) where TKey : notnull {
             var removingKeys = dict.Where(predicate).Select(x => x.Key);
             var removeCount = 0;
             foreach (var removingKey in removingKeys) {

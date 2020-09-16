@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,8 +20,8 @@ namespace Decuplr.Sourceberg {
     }
 
     internal class ReflectionTypeSymbolLocator {
-        private readonly Dictionary<Type, IAssemblySymbol?> _typeAssemblyCache = new Dictionary<Type, IAssemblySymbol?>();
-        private readonly Dictionary<Type, ITypeSymbol?> _typeSymbolCache = new Dictionary<Type, ITypeSymbol?>();
+        private readonly ConcurrentDictionary<Type, IAssemblySymbol?> _typeAssemblyCache = new ConcurrentDictionary<Type, IAssemblySymbol?>();
+        private readonly ConcurrentDictionary<Type, ITypeSymbol?> _typeSymbolCache = new ConcurrentDictionary<Type, ITypeSymbol?>();
 
         public Compilation Compilation { get; }
 
@@ -88,7 +89,7 @@ namespace Decuplr.Sourceberg {
             var queryResult = Compilation.References.Select(reference => Compilation.GetAssemblyOrModuleSymbol(reference))
                                                  .FirstOrDefault(x => x is IAssemblySymbol asmSymbol && asmSymbol.Identity.Equals(typeAssemblyId));
             var assembly = queryResult as IAssemblySymbol;
-            _typeAssemblyCache[type] = assembly;
+            _typeAssemblyCache.TryAdd(type, assembly);
             return assembly;
         }
 
@@ -96,7 +97,7 @@ namespace Decuplr.Sourceberg {
             if (_typeSymbolCache.TryGetValue(type, out var symbol))
                 return symbol;
             symbol = GetTypeSymbolCore(type);
-            _typeSymbolCache[type] = symbol;
+            _typeSymbolCache.TryAdd(type, symbol);
             return symbol;
         }
 

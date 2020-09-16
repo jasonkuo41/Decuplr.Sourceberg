@@ -65,7 +65,7 @@ namespace Decuplr.Sourceberg.TestUtilities {
         }
 
         public static SyntaxTree Parse(string text, string filename = "", CSharpParseOptions? options = null, Encoding? encoding = null) {
-            if ((object)options == null) {
+            if (options is null) {
                 options = TestOptions.Regular;
             }
 

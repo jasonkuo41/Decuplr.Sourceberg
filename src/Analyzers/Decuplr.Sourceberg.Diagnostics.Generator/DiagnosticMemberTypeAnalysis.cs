@@ -37,13 +37,13 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             return returnSymbol;
         }
 
-        private DiagnosticDescriptionAttribute? GetDescriptionAttribute(ISymbol member, DiagnosticCollection dc) {
+        private DiagnosticDescriptionAttribute? GetDescriptionAttribute(ISymbol member, DiagnosticReporter diagnostReport) {
             var memberAttribute = member.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals<DiagnosticDescriptionAttribute>(_locator));
             var ctor = memberAttribute.ConstructorArguments;
             var args = memberAttribute.NamedArguments;
             var success = true;
-            success &= memberAttribute.EnsureNotNull<string>("title", 2, dc.Add, _ct, out var title);
-            success &= memberAttribute.EnsureNotNull<string>("description", 3, dc.Add, _ct, out var descript);
+            success &= memberAttribute.EnsureNotNull<string>("title", 2, diagnostReport.Add, _ct, out var title);
+            success &= memberAttribute.EnsureNotNull<string>("description", 3, diagnostReport.Add, _ct, out var descript);
             if (!success)
                 return null;
             Debug.Assert(title is { });
@@ -62,20 +62,20 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             var memberAttribute = member.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals<DiagnosticDescriptionAttribute>(_locator));
             if (memberAttribute is null)
                 return null;
-            var dc = new DiagnosticCollection(reportDiagnostic);
+            var diagnosticReport = new DiagnosticReporter(reportDiagnostic);
             // Must be static!
             if (!member.IsStatic) {
                 // DIAGNOSTIC: about being static
-                dc.Add(DiagnosticSource.MemberShouldBeStatic(member));
+                diagnosticReport.Add(DiagnosticSource.MemberShouldBeStatic(member));
             }
             var returnSymbol = GetReturnType(member);
             if (!GetReturnType(member).Equals<DiagnosticDescriptor>(_locator)) {
                 // DIAGNOSTIC: about not returning the correct type
-                dc.Add(DiagnosticSource.MemberShouldReturnDescriptor(member, returnSymbol));
+                diagnosticReport.Add(DiagnosticSource.MemberShouldReturnDescriptor(member, returnSymbol));
             }
             // we run once to make sure diagnostic is all collected
-            var result = GetDescriptionAttribute(member, dc);
-            return dc.ContainsError ? null : result;
+            var result = GetDescriptionAttribute(member, diagnosticReport);
+            return diagnosticReport.ContainsError ? null : result;
         }
     }
 }

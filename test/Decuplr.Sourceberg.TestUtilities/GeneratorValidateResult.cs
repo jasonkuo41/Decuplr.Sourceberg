@@ -39,9 +39,9 @@ namespace Decuplr.Sourceberg.TestUtilities {
         private IEnumerable<Diagnostic> GetMatchingDiagnostics(DiagnosticMatch diagnosticMatch) {
             return GeneratorDiagnostics.Where(x => IsNullOrEqual(x.Id, diagnosticMatch.Id))
                                        .Where(x => IsNullOrEqual(x.Descriptor, diagnosticMatch.Descriptor))
-                                       .Where(x => IsNullOrEqual(x.Severity, diagnosticMatch.Severity, (x, y) => x == y.Value))
-                                       .Where(x => IsNullOrEqual(x.Location.GetLineSpan().StartLinePosition, diagnosticMatch.StartLocation, (x, y) => x == y.Value))
-                                       .Where(x => IsNullOrEqual(x.Location.GetLineSpan().EndLinePosition, diagnosticMatch.EndLocation, (x, y) => x == y.Value));
+                                       .Where(x => IsNullOrEqual(x.Severity, diagnosticMatch.Severity, (x, y) => x == y!.Value))
+                                       .Where(x => IsNullOrEqual(x.Location.GetLineSpan().StartLinePosition, diagnosticMatch.StartLocation, (x, y) => x == y!.Value))
+                                       .Where(x => IsNullOrEqual(x.Location.GetLineSpan().EndLinePosition, diagnosticMatch.EndLocation, (x, y) => x == y!.Value));
         }
 
         public GeneratorValidateResult AssertNoModification() {

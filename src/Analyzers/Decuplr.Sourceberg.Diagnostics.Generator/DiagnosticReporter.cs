@@ -5,13 +5,13 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 
 namespace Decuplr.Sourceberg.Diagnostics.Generator {
-    class DiagnosticCollection : IReadOnlyCollection<Diagnostic> {
+    class DiagnosticReporter : IReadOnlyCollection<Diagnostic> {
         private readonly Action<Diagnostic>? _reportTarget;
         private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
 
-        public DiagnosticCollection() : this(null) { }
+        public DiagnosticReporter() : this(null) { }
 
-        public DiagnosticCollection(Action<Diagnostic>? reportTarget) {
+        public DiagnosticReporter(Action<Diagnostic>? reportTarget) {
             _reportTarget = reportTarget;
         }
 
