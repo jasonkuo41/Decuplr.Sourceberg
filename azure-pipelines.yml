@@ -28,11 +28,13 @@ steps:
   inputs:
     command: 'test'
     projects: '**/test/**/*.csproj'
+    arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./Coverage/'
+    publishTestResults: true
 
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/Decuplr.Sourceberg/**/site/cobertura/coverage.xml'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/Coverage/coverage.cobertura.xml'
 
 - task: DotNetCoreCLI@2
   inputs:
