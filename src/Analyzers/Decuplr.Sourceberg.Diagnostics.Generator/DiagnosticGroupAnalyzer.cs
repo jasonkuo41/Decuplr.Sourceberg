@@ -46,7 +46,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                     if (group is null)
                         return;
                     foreach (var member in namedTypeSymbol.GetMembers().Where(x => x is IPropertySymbol || x is IFieldSymbol)) {
-                        var descriptionAttribute = memberAnalysis.GetMemberSymbolAttribute(context.Symbol, context.ReportDiagnostic);
+                        var descriptionAttribute = memberAnalysis.GetMemberSymbolAttribute(member, context.ReportDiagnostic);
                         if (descriptionAttribute is null)
                             continue;
                         attr.Add((descriptionAttribute.GetDescriptor(group), member));

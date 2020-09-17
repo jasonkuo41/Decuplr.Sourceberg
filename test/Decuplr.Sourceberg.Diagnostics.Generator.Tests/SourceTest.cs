@@ -8,26 +8,22 @@ using Xunit.Abstractions;
 namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
     internal class SourceTest : IEnumerable<object[]> {
 
-        private class TestSourceConvert : TestSource, IXunitSerializable {
+        private class TestSourceConvert : FileTestSource, IXunitSerializable {
 
-            private readonly Lazy<TestSource> _source;
+            private readonly Lazy<FileTestSource> _source;
 
-            public override string FilePath => _source.Value.FilePath;
+            public override IReadOnlyList<string> FilePaths => _source.Value.FilePaths;
 
-            public override Type AssociatedType => _source.Value.AssociatedType;
+            public override IReadOnlyList<FileSourceAttribute> FileSources => _source.Value.FileSources;
 
             public Type Type { get; set; }
-
-            public override CaseKind CaseKind => _source.Value.CaseKind;
-
-            public override SourceKind SourceKind => _source.Value.SourceKind;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             public TestSourceConvert() {
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-                _source = new Lazy<TestSource>(() => {
+                _source = new Lazy<FileTestSource>(() => {
                     Debug.Assert(Type is { });
-                    var instance = Activator.CreateInstance(Type) as TestSource;
+                    var instance = Activator.CreateInstance(Type) as FileTestSource;
                     Debug.Assert(instance is { });
                     return instance;
                 });
@@ -41,29 +37,23 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
                 info.AddValue("type", Type);
             }
 
-            protected override IEnumerable<DiagnosticMatch> GetMatches() => _source.Value.MatchingDiagnostics;
+            public override string ToString() => $"{Type.Name} | File : {string.Join(", ", FilePaths)}";
 
-            public override string ToString() => $"{Type.Name} | {CaseKind} | {SourceKind} | File : {FilePath}";
+            public override IEnumerable<DiagnosticMatch> GetMatches() => _source.Value.GetMatches();
         }
 
-        private readonly CaseKind _lookingCases;
-        private readonly SourceKind _lookingSource;
+        private readonly Func<FileTestSource, bool>? _predicate;
 
-        public SourceTest(CaseKind caseKind, SourceKind sourceKind) {
-            _lookingCases = caseKind;
-            _lookingSource = sourceKind;
-        }
+        public SourceTest() { }
+        public SourceTest(Func<FileTestSource, bool> predicate) => _predicate = predicate;
 
         public IEnumerator<object[]> GetEnumerator() {
             foreach(var type in typeof(SourceTest).Assembly.GetTypes()) {
-                if (!type.IsSubclassOf(typeof(TestSource)) || type.IsAbstract || type == typeof(TestSourceConvert))
+                if (!type.IsSubclassOf(typeof(FileTestSource)) || type.IsAbstract || type == typeof(TestSourceConvert))
                     continue;
                 var convert = new TestSourceConvert { Type = type };
-                if (!convert.CaseKind.HasFlag(_lookingCases))
-                    continue;
-                if (!convert.SourceKind.HasFlag(_lookingSource))
-                    continue;
-                yield return new object[] { convert };
+                if (_predicate?.Invoke(convert) ?? true)
+                    yield return new object[] { convert };
             }
         }
 

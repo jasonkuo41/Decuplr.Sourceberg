@@ -1,6 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Linq;
+using System.Threading.Tasks;
 using Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestData;
 using Decuplr.Sourceberg.TestUtilities;
 using Microsoft.CodeAnalysis;
@@ -26,6 +27,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
                       .AssertNoModification()
                       .AssertSourceNoDiagnostics();
         }
+
 
         [Theory]
         [InlineData("TestData/MissingPartialKeyword", 7, 20, DiagnosticSource.c_TypeWithDiagnosticGroupShouldBePartial)]
@@ -57,6 +59,12 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
             Assert.All(actual, item => Assert.Contains(item, expected));
         }
 
-
+        /*
+        public async Task CorrectlySetupTypeTest2(FileTestSource test) {
+            var result = await test.CreateCompilationAsync();
+            var emitResult = result.Compilation.Emit(null, out var assembly);
+            assembly.GetTypes()[0].FullName;
+        }
+        */
     }
 }
