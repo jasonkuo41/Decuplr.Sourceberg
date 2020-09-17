@@ -29,7 +29,7 @@ namespace Decuplr.Sourceberg.TestUtilities {
             CSharpCompilationOptions? options = null,
             CSharpParseOptions? parseOptions = null,
             string assemblyName = "",
-            string sourceFileName = "") => CreateEmptyCompilation(source, FrameworkResources.Standard.AddRange(references), options, parseOptions, assemblyName, sourceFileName);
+            string sourceFileName = "") => CreateEmptyCompilation(source, FrameworkResources.Standard.AddRange(references ?? Array.Empty<MetadataReference>()), options, parseOptions, assemblyName, sourceFileName);
 
         public static CSharpCompilation CreateEmptyCompilation(
             CSharpTestSource source,

@@ -86,7 +86,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         }
 
         internal DiagnosticGroupAttribute? VerifyType(INamedTypeSymbol symbol, Action<Diagnostic> reportDiagnostic) {
-            if (symbol.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(_locator)))
+            if (!symbol.GetAttributes().Any(x => x.AttributeClass.Equals<DiagnosticGroupAttribute>(_locator)))
                 return null;
             return VerifyType(symbol, symbol.DeclaringSyntaxReferences.Select(x => x.GetSyntax(_ct) as TypeDeclarationSyntax).WhereNotNull(), reportDiagnostic);
         }
