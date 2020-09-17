@@ -62,4 +62,13 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCase {
             };
         }
     }
+
+    [FileSource("TestData/CorrectTypeSingleProperty")]
+    internal class Test_CorrectTypeSingleProperty : SuccessFileTestSource { }
+
+    [FileSource("TestData/CorrectTypeSingleField")]
+    internal class Test_CorrectTypeSingleField : SuccessFileTestSource { }
+
+    [FileSource("TestData/CorrectTypeMultipleProperty")]
+    internal class Test_CorrectTypeMultipleProperty : SuccessFileTestSource { }
 }

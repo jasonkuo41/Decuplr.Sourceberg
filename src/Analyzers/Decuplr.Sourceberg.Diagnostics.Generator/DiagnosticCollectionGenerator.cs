@@ -25,11 +25,11 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             }
         }
 
-        public void Initialize(InitializationContext context) {
+        public void Initialize(GeneratorInitializationContext context) {
             context.RegisterForSyntaxNotifications(() => new SyntaxCapture());
         }
 
-        private void ReportDuplicate(SourceGeneratorContext context, IReadOnlyList<DiagnosticTypeInfo> generatedInfo) {
+        private void ReportDuplicate(GeneratorExecutionContext context, IReadOnlyList<DiagnosticTypeInfo> generatedInfo) {
             var idGroups = generatedInfo.SelectMany(info => info.DescriptorSymbols.Select(member => (Pair: member, Info: info)))
                                         .Select(x => (Member: x.Pair.Key, Descriptor: x.Pair.Value.GetDescriptor(x.Info.GroupAttribute)))
                                         .GroupBy(x => x.Descriptor.Id);
@@ -42,7 +42,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             }
         }
 
-        public void Execute(SourceGeneratorContext context) {
+        public void Execute(GeneratorExecutionContext context) {
             try {
                 if (!(context.SyntaxReceiver is SyntaxCapture capture))
                     return;

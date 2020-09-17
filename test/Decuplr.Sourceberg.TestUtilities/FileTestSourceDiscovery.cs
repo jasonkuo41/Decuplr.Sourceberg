@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Decuplr.Sourceberg.TestUtilities;
+using System.Reflection;
 using Xunit.Abstractions;
 
-namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
-    internal class SourceTest : IEnumerable<object[]> {
+namespace Decuplr.Sourceberg.TestUtilities {
+    public class FileTestSourceDiscovery : IEnumerable<object[]> {
 
         private class TestSourceConvert : FileTestSource, IXunitSerializable {
 
@@ -43,12 +43,16 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
         }
 
         private readonly Func<FileTestSource, bool>? _predicate;
+        private readonly Assembly _assembly;
 
-        public SourceTest() { }
-        public SourceTest(Func<FileTestSource, bool> predicate) => _predicate = predicate;
+        public FileTestSourceDiscovery(Assembly assembly) => _assembly = assembly;
+        public FileTestSourceDiscovery(Assembly assembly, Func<FileTestSource, bool> predicate) {
+            _assembly = assembly;
+            _predicate = predicate;
+        }
 
         public IEnumerator<object[]> GetEnumerator() {
-            foreach(var type in typeof(SourceTest).Assembly.GetTypes()) {
+            foreach (var type in _assembly.GetTypes()) {
                 if (!type.IsSubclassOf(typeof(FileTestSource)) || type.IsAbstract || type == typeof(TestSourceConvert))
                     continue;
                 var convert = new TestSourceConvert { Type = type };

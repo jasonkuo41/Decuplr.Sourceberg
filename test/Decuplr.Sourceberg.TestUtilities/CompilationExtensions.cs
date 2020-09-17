@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Decuplr.Sourceberg.TestUtilities {
     public static class CompilationExtensions {
-        public static EmitResult Emit(this Compilation compilation, AssemblyLoadContext? loadContext, out Assembly? assembly) {
+        public static EmitResult EmitAssembly(this Compilation compilation, AssemblyLoadContext? loadContext, out Assembly? assembly) {
             loadContext ??= new AssemblyLoadContext(null);
             using var peStream = new MemoryStream();
             using var pdbStream = new MemoryStream();
@@ -34,12 +34,20 @@ namespace Decuplr.Sourceberg.TestUtilities {
         /// Emit's the assembly, while asserting the compilation result should success
         /// </summary>
         /// <returns></returns>
-        public static Assembly EmitAssertSuccess(this Compilation compilation, bool noWarn = true, AssemblyLoadContext? context = null) {
-            var result = compilation.Emit(context, out var assembly);
-            Assert.Empty(result.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Warning || x.Severity == DiagnosticSeverity.Error));
+        public static Assembly EmitAssemblyWithSuccess(this Compilation compilation, bool noWarn = true, AssemblyLoadContext? context = null) {
+            var result = compilation.EmitAssembly(context, out var assembly);
+            Assert.Empty(result.Diagnostics.Where(ShouldEmitError));
             Assert.True(result.Success, string.Join(Environment.NewLine, result.Diagnostics));
             Debug.Assert(assembly is { });
             return assembly;
+
+            bool ShouldEmitError(Diagnostic diagnostic) {
+                if (diagnostic.Severity == DiagnosticSeverity.Error)
+                    return true;
+                if (!noWarn && diagnostic.Severity == DiagnosticSeverity.Warning)
+                    return true;
+                return false;
+            }
         }
 
     }
