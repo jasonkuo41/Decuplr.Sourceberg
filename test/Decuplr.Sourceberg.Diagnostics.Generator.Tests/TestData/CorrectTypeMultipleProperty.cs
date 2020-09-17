@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCases {
+namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestData {
     [DiagnosticGroup("EXM", "Decuplr.Sourceberg.Example", FormattingString = "00000")]
     partial class CorrectTypeMultipleProperty {
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCases {
+namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestData {
     [DiagnosticGroup("OK", "Man")]
     partial class NullCtorDescriptionAttribute {
 

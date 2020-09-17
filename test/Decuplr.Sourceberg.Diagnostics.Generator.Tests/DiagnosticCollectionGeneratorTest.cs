@@ -1,7 +1,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Linq;
-using Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCases;
+using Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestData;
 using Decuplr.Sourceberg.TestUtilities;
 using Microsoft.CodeAnalysis;
 using Xunit;
@@ -28,12 +28,12 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
         }
 
         [Theory]
-        [InlineData("TestCases/MissingPartialKeyword", 7, 20, DiagnosticSource.c_TypeWithDiagnosticGroupShouldBePartial)]
-        [InlineData("TestCases/NullCtorInGroupAttribute", 6, 6, DiagnosticSource.c_AttributeCtorNoNull)]
-        [InlineData("TestCases/ShouldNotStaticCtor", 8, 16, DiagnosticSource.c_TypeWithDiagnosticGroupShouldNotContainStaticCtor)]
-        [InlineData("TestCases/MemberDescriptionStatic", 11, 39, DiagnosticSource.c_MemberWithDescriptionShouldBeStatic)]
-        [InlineData("TestCases/MemberDescriptionWrongReturn", 11, 25, DiagnosticSource.c_MemberWithDescriptionShouldBeStatic)]
-        [InlineData("TestCases/NullCtorDescriptionAttribute", 10, 10, DiagnosticSource.c_AttributeCtorNoNull)]
+        [InlineData("TestData/MissingPartialKeyword", 7, 20, DiagnosticSource.c_TypeWithDiagnosticGroupShouldBePartial)]
+        [InlineData("TestData/NullCtorInGroupAttribute", 6, 6, DiagnosticSource.c_AttributeCtorNoNull)]
+        [InlineData("TestData/ShouldNotStaticCtor", 8, 16, DiagnosticSource.c_TypeWithDiagnosticGroupShouldNotContainStaticCtor)]
+        [InlineData("TestData/MemberDescriptionStatic", 11, 39, DiagnosticSource.c_MemberWithDescriptionShouldBeStatic)]
+        [InlineData("TestData/MemberDescriptionWrongReturn", 11, 25, DiagnosticSource.c_MemberWithDescriptionShouldBeStatic)]
+        [InlineData("TestData/NullCtorDescriptionAttribute", 10, 10, DiagnosticSource.c_AttributeCtorNoNull)]
         public void ErrorSetupDiagnosticTest(string filePath, int line, int chara, string diagnosticId) {
             _generator.ValidateWithFile(filePath)
                       .AssertNoModification()
@@ -47,9 +47,9 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
         }
 
         [Theory]
-        [InlineData("TestCases/CorrectTypeSingleProperty", typeof(CorrectTypeSingleProperty))]
-        [InlineData("TestCases/CorrectTypeSingleField", typeof(CorrectTypeSingleField))]
-        [InlineData("TestCases/CorrectTypeMultipleProperty", typeof(CorrectTypeMultipleProperty))]
+        [InlineData("TestData/CorrectTypeSingleProperty", typeof(CorrectTypeSingleProperty))]
+        [InlineData("TestData/CorrectTypeSingleField", typeof(CorrectTypeSingleField))]
+        [InlineData("TestData/CorrectTypeMultipleProperty", typeof(CorrectTypeMultipleProperty))]
         public void CorrectlySetupTypeTest(string filePath, Type type) {
             var generated = AssertDiagnosticGeneration.FromType(type, _generator, filePath, _output);
             var expected = generated.AssertAll().ToHashSet();

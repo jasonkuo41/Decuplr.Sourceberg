@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCases {
+namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestData {
     [DiagnosticGroup("EXM", "Decuplr.Sourceberg.Example", FormattingString = "000")]
-    partial class CorrectTypeSingleField {
+    partial class CorrectTypeSingleProperty {
 
         [DiagnosticDescription(234, DiagnosticSeverity.Info, "ThisIsATitle", "ThisIsDescription")]
-        internal static DiagnosticDescriptor TestDescriptor;
+        internal static DiagnosticDescriptor TestDescriptor { get; }
     }
 }

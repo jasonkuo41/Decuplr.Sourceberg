@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -27,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="TestCases\**\*.cs">
+		<Compile Update="TestData\**\*.cs">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Compile>
 	</ItemGroup>

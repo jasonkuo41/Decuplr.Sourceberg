@@ -1,15 +1,15 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
+﻿using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Decuplr.Sourceberg.Diagnostics.Generator.Tests.TestCase;
 using Decuplr.Sourceberg.TestUtilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
     public class AnalyzerTest {
@@ -19,6 +19,10 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
             var assemblies = new[] { typeof(DiagnosticGroupAttribute).Assembly, typeof(Diagnostic).Assembly };
             return CSharpCompilationSource.CreateCompilation(source, assemblies.Select(x => MetadataReference.CreateFromFile(x.Location)))
                                           .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new DiagnosticGroupAnalyzer()));
+        }
+
+        private protected static SourceTest GetSourceTest(CaseKind caseKind, SourceKind sourceKind) {
+            return new SourceTest(caseKind, sourceKind);
         }
 
         [Fact]
@@ -32,15 +36,12 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
         }
 
         [Theory]
-        [InlineData("TestCases/MissingPartialKeyword.cs", 7, 20, DiagnosticSource.c_TypeWithDiagnosticGroupShouldBePartial)]
-        public async Task ErrorSetupDiagnosticTest(string filePath, int line, int chara, string diagnosticId) {
-            var source = await File.ReadAllTextAsync(filePath);
-
-            var compilation = CreateCompilation(source);
+        [MemberData(nameof(GetSourceTest), CaseKind.SingleError, SourceKind.SingleType)]
+        public async Task ErrorSetupDiagnosticTest(TestSource test) {
+            var compilation = CreateCompilation(await test.GetSourceAsnyc());
             var diagnostic = await compilation.GetAnalyzerDiagnosticsAsync();
 
-            var result = diagnostic.GetMatchingDiagnostics(new DiagnosticMatch { Id = diagnosticId, StartLocation = (line, chara) });
-            Assert.Single(result);
+            test.EnsureDiagnosticMatch(diagnostic);
         }
     }
 }
