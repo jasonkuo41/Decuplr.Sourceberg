@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Update="Decuplr.Sourceberg.Diagnostic">
+	  <Reference Include="Decuplr.Sourceberg.Diagnostic">
 	    <HintPath>..\..\..\libs\netstandard2.0\Decuplr.Sourceberg.Diagnostic.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
