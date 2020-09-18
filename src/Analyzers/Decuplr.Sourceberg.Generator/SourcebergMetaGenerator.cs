@@ -26,7 +26,7 @@ namespace Decuplr.Sourceberg.Generator {
             }
         }
 
-        private void AddAnalyzerSource(SourceGeneratorContext context, INamedTypeSymbol generatorSymbol, ITypeSymbol analyzerSymbol) {
+        private void AddAnalyzerSource(GeneratorExecutionContext context, INamedTypeSymbol generatorSymbol, ITypeSymbol analyzerSymbol) {
             var analyzerCode =
 $@"
 using System.Collections.Immutable;
@@ -55,7 +55,7 @@ namespace {analyzerSymbol.ContainingNamespace} {{
             context.AddSource($"{analyzerSymbol}.generated.cs", SourceText.From(analyzerCode, Encoding.UTF8));
         }
 
-        private void AddGeneratorSource(SourceGeneratorContext context, INamedTypeSymbol startupSymbol, ITypeSymbol generatorSymbol) {
+        private void AddGeneratorSource(GeneratorExecutionContext context, INamedTypeSymbol startupSymbol, ITypeSymbol generatorSymbol) {
             var generatorCode =
 $@"
 using System.ComponentModel;
@@ -69,18 +69,18 @@ namesapce {generatorSymbol.ContainingNamespace} {{
     
     [Generator]
     public partial class {generatorSymbol.Name} : ISourceGenerator {{
-        public void Initialize({nameof(InitializationContext)} context) => context.RegisterForSyntaxNotifications(() => new SourcebergSyntaxReceiver(new {startupSymbol}()));
+        public void Initialize({nameof(GeneratorInitializationContext)} context) => context.RegisterForSyntaxNotifications(() => new SourcebergSyntaxReceiver(new {startupSymbol}()));
         
-        public void Execute({nameof(SourceGeneratorContext)} context) => SourcebergGenerator.Execute(context);
+        public void Execute({nameof(GeneratorExecutionContext)} context) => SourcebergGenerator.Execute(context);
     }}
 }}
 
 ";
         }
 
-        public void Initialize(InitializationContext context) => context.RegisterForSyntaxNotifications(() => new MetaReceiver());
+        public void Initialize(GeneratorInitializationContext context) => context.RegisterForSyntaxNotifications(() => new MetaReceiver());
 
-        public void Execute(SourceGeneratorContext context) {
+        public void Execute(GeneratorExecutionContext context) {
             if (!(context.SyntaxReceiver is MetaReceiver receiver))
                 return;
             var generatorStartupSymbol = context.Compilation.GetTypeByMetadataName("Decuplr.Sourceberg.Generation.GeneratorStartup");

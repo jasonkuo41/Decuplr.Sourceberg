@@ -10,9 +10,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
+		<PackageReference Include="Decuplr.Sourceberg.CodeBuilder" Version="$(Version)" PrivateAssets="true"/>
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 		<ProjectReference Include="..\..\Decuplr.Sourceberg.Diagnostics\Decuplr.Sourceberg.Diagnostics.csproj" />
 	</ItemGroup>
 
@@ -24,6 +26,12 @@
 		<Compile Include="..\..\Common\RoslynSymbolExtensions.cs" Link=".common\RoslynSymbolExtensions.cs" />
 		<Compile Include="..\..\Common\ReflectionTypeSymbolLocator.cs" Link=".common\ReflectionTypeSymbolLocator.cs" />
 		<Compile Include="..\..\Common\ReflectionTypeExtensions.cs" Link=".common\ReflectionTypeExtensions.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Decuplr.Sourceberg.Diagnostic">
+	    <HintPath>..\..\..\libs\netstandard2.0\Decuplr.Sourceberg.Diagnostic.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->

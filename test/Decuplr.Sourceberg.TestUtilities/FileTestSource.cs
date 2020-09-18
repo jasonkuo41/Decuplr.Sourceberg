@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Decuplr.Sourceberg.TestUtilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -31,7 +28,10 @@ namespace Decuplr.Sourceberg.TestUtilities {
         public async Task<FileSourceInfo> CreateCompilationAsync(IEnumerable<MetadataReference>? references, CancellationToken ct = default) {
             var syntaxTrees = new List<SyntaxTree>(FilePaths.Count);
             foreach (var filePath in FilePaths) {
-                var parseTest = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(Path.ChangeExtension(filePath, ".cs"), ct), TestOptions.Regular, filePath, encoding: Encoding.UTF8, cancellationToken: ct);
+                var actualPath = Path.ChangeExtension(filePath, ".cs");
+                if (!File.Exists(filePath))
+                    actualPath = Path.ChangeExtension(filePath, ".test.cs");
+                var parseTest = CSharpSyntaxTree.ParseText(await File.ReadAllTextAsync(actualPath, ct), TestOptions.Regular, filePath, encoding: Encoding.UTF8, cancellationToken: ct);
                 syntaxTrees.Add(parseTest);
             }
 

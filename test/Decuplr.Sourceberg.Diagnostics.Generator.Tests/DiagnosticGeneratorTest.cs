@@ -66,16 +66,19 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
             var drivder = GetGeneratorDriver();
             drivder.RunGeneratorsAndUpdateCompilation(result.Compilation, out var generatedCompilation, out var diagnostics);
             test.AssertDiagnostics(diagnostics);
+            _output.WriteSyntaxTrees(generatedCompilation.SyntaxTrees);
 
-            foreach(var generatedTypes in generatedCompilation.EmitAssemblyWithSuccess().GetTypes()) {
-                var group = generatedTypes.GetCustomAttribute<DiagnosticGroupAttribute>();
+            foreach(var generatedType in generatedCompilation.EmitAssemblyWithSuccess().GetTypes()) {
+                var group = generatedType.GetCustomAttribute<DiagnosticGroupAttribute>();
                 if (group is null)
                     continue;
 
-                var localType = typeof(DiagnosticGeneratorTest).Assembly.GetType(generatedTypes.FullName);
+                var localType = typeof(DiagnosticGeneratorTest).Assembly.GetType(generatedType.FullName ?? generatedType.Name);
 
-                Assert.Equal(GetDescriptorFromReflection(generatedTypes), GetDescriptorFromReflection(localType));
-                Assert.Equal(DescriptorLocator.FromType(generatedTypes), GetDescriptorFromReflection(localType));
+                Debug.Assert(localType is { });
+
+                Assert.Equal(GetDescriptorFromReflection(generatedType), GetDescriptorFromReflection(localType));
+                Assert.Equal(DescriptorLocator.FromType(generatedType), GetDescriptorFromReflection(localType));
             }
         }
     }

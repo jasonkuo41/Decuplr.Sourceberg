@@ -63,7 +63,7 @@ namespace Decuplr.Sourceberg.Services.Implementation {
 
             public SyntaxTree AddSource(GeneratedSourceText sourceText) {
                 var compilation = DeclaringCompilation as CSharpCompilation ?? throw new NotSupportedException("Non C# compilation is not supported");
-                var syntax = CSharpSyntaxTree.ParseText(sourceText.SourceText, new CSharpParseOptions(compilation.LanguageVersion), isGeneratedCode: true, cancellationToken: Parent._context.OnOperationCanceled);
+                var syntax = CSharpSyntaxTree.ParseText(sourceText.SourceText, new CSharpParseOptions(compilation.LanguageVersion), cancellationToken: Parent._context.OnOperationCanceled);
                 DeclaringCompilation = DeclaringCompilation.AddSyntaxTrees(syntax);
                 GeneratedSourceTexts.Add(sourceText);
                 return syntax;

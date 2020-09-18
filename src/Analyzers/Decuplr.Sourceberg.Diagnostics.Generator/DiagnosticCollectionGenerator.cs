@@ -68,7 +68,8 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                         DescriptorSymbols = members!
                     };
                     ddList.Add(info);
-                    var code = DiagnosticGroupCodeBuilder.Generate(info);
+                    //var code = DiagnosticGroupCodeBuilder.Generate(info);
+                    var code = new DiagnosticGroupCodeBuilder(locator, info).ToString();
                     var sourceText = SourceText.From(code, Encoding.UTF8);
                     context.AddSource($"{type}.diagnostics.generated", sourceText);
                 }

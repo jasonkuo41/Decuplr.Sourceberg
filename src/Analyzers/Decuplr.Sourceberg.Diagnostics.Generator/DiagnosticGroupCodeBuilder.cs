@@ -1,86 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using Microsoft.CodeAnalysis;
 using Decuplr.Sourceberg.Diagnostics.Internal;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Decuplr.Sourceberg.Diagnostics.Generator {
-    class DiagnosticGroupCodeBuilder {
-        public static string Generate(DiagnosticTypeInfo info) {
-            var descriptorSymbols = info.DescriptorSymbols;
-            var group = info.GroupAttribute;
-            var symbol = info.ContainingSymbol;
+    internal class DiagnosticGroupCodeBuilder {
+        private readonly ReflectionTypeSymbolLocator _locator;
+        private readonly DiagnosticTypeInfo _diagnosticInfo;
 
-            var exportName = $"__generated_yield_collection";
-            var dontShow = "[EditorBrowsable(EditorBrowsableState.Never)]";
-            var generatedCode = $"[GeneratedCode(\"{typeof(DiagnosticCollectionGenerator).FullName}\", \"{typeof(DiagnosticCollectionGenerator).Assembly.GetName().Version}\")]";
-
-            var staticCtor = new StringBuilder();
-            staticCtor.Append($"var list = new List<DiagnosticDescriptor>({descriptorSymbols.Count});");
-            foreach (var (containingSymbol, descriptor) in descriptorSymbols) {
-                IEnumerable<object?> passingArguments = new object?[] { $"{group.GroupPrefix}{descriptor.Id.ToString(group.FormattingString)}", descriptor.Title, descriptor.Description,
-                                                                        group.CategoryName, descriptor.Severity, descriptor.EnableByDefault,
-                                                                        descriptor.LongDescription, descriptor.HelpLinkUri };
-                passingArguments = passingArguments.WhereNotNull().Select(x => x switch {
-                    string str => $"\"{x}\"",
-                    bool b => b.ToString().ToLower(),
-                    DiagnosticSeverity ds => $"{nameof(DiagnosticSeverity)}.{ds}",
-                    _ => x.ToString()
-                });
-                passingArguments = passingArguments.Concat(descriptor.CustomTags ?? Array.Empty<string>());
-                staticCtor.AppendLine($"{containingSymbol.Name} = new {nameof(DiagnosticDescriptor)}({string.Join(", ", passingArguments.WhereNotNull())});");
-                staticCtor.AppendLine($"list.Add({containingSymbol.Name});");
-            }
-            staticCtor.AppendLine($"{exportName} = list;");
-
-            var contextCode =
-$@"
-
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.CodeDom.Compiler;
-using Microsoft.CodeAnalysis;
-using Decuplr.Sourceberg.Diagnostics.Internal;
-
-namespace {symbol.ContainingNamespace} {{
-    
-    [{nameof(ExportDiagnosticDescriptorMethodAttribute)}(""{exportName}"")]
-    {GetDisplayAccessibility(symbol)} {(symbol.IsStatic ? "static" : null)} partial {GetTypeKind(symbol)} {symbol.Name} {{
-
-        {generatedCode}
-        {dontShow}
-        static {symbol.Name}() {{
-            {staticCtor}
-        }}
-
-        {generatedCode}
-        {dontShow}
-        internal static IEnumerable<DiagnosticDescriptor> {exportName} {{ get; }}
-
-    }}
-
-}}";
-
-            return contextCode;
+        public DiagnosticGroupCodeBuilder(ReflectionTypeSymbolLocator locator, DiagnosticTypeInfo typeInfo) {
+            _locator = locator;
+            _diagnosticInfo = typeInfo;
         }
 
-        private static string GetDisplayAccessibility(ITypeSymbol symbol) => symbol.DeclaredAccessibility switch
+        private ITypeSymbol Symbol<T>() => _locator.GetTypeSymbol<T>();
+
+        private string ToCSharpString(object item) => item switch
         {
-            Accessibility.Public => "public",
-            Accessibility.Internal => "internal",
-            Accessibility.Private => "private",
-            Accessibility.Protected => "protected",
-            Accessibility.ProtectedOrInternal => "protected internal",
-            Accessibility.ProtectedAndInternal => "private protected",
-            _ => throw new ArgumentException($"{symbol.DeclaredAccessibility} is not a valid accessibility for this term.")
+            string str => SymbolDisplay.FormatLiteral(str, true),
+            bool b => SymbolDisplay.FormatPrimitive(b, false, false),
+            DiagnosticSeverity ds => $"{Symbol<DiagnosticSeverity>()}.{ds}",
+            _ => item.ToString()
         };
 
-        private static string GetTypeKind(ITypeSymbol symbol) => symbol.TypeKind switch
-        {
-            TypeKind.Class => "class",
-            TypeKind.Struct => "struct",
-            _ => throw new ArgumentException($"Typekind {symbol.TypeKind} is not supported")
-        };
+        public override string ToString() {
+            Debug.Assert(_diagnosticInfo.ContainingSymbol is INamedTypeSymbol);
+            const string exportName = "__generated_yield_collection";
+
+            var builder = new CodeExtensionBuilder(_diagnosticInfo.ContainingSymbol as INamedTypeSymbol);
+
+            builder.Attribute($"{Symbol<ExportDiagnosticDescriptorMethodAttribute>()}(\"{exportName}\")");
+            builder.ExtendSymbol(block => {
+                block.AttributeGenerated(typeof(DiagnosticCollectionGenerator).Assembly);
+                block.AddBlock($"static {builder.ExtendingSymbol.Name}() ", cctor => {
+
+                    cctor.State($"var list = new {Symbol<List<DiagnosticDescriptor>>()} ({_diagnosticInfo.DescriptorSymbols.Count})");
+
+                    foreach (var (containingSymbol, descriptor) in _diagnosticInfo.DescriptorSymbols) {
+                        var group = _diagnosticInfo.GroupAttribute;
+                        var constructors = containingSymbol.GetAttributes().First(x => x.AttributeClass.Equals<DiagnosticDescriptionAttribute>(_locator));
+
+                        var descriptorArguments = new object?[] {
+                            $"{group.GroupPrefix}{descriptor.Id.ToString(group.FormattingString)}",
+                            descriptor.Title,
+                            descriptor.Description,
+                            group.CategoryName,
+                            descriptor.Severity,
+                            descriptor.EnableByDefault,
+                            descriptor.LongDescription,
+                            descriptor.HelpLinkUri
+                        }.WhereNotNull().Select(x => ToCSharpString(x));
+
+                        cctor.State($"{containingSymbol.Name} = new {Symbol<DiagnosticDescriptor>()}({string.Join(", ", descriptorArguments)})");
+                        cctor.State($"list.Add({containingSymbol.Name});");
+                        cctor.State($"{exportName} = list;");
+                    }
+                });
+
+                block.AttributeGenerated(typeof(DiagnosticCollectionGenerator).Assembly);
+                block.AttributeHideEditor();
+                block.AddPlain($"internal static {Symbol<IEnumerable<DiagnosticDescriptor>>()} {exportName} {{ get; }} ");
+            });
+
+            return builder.ToString();
+        }
     }
 }

@@ -18,11 +18,11 @@ namespace Decuplr.Sourceberg.Internal {
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
             = new DiagnosticDescriptor("SCBRGERR", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured : {1}", "InternalError", DiagnosticSeverity.Warning, true);
 
-        private readonly SourceGeneratorContext _generatorContext;
+        private readonly GeneratorExecutionContext _generatorContext;
         private readonly SourcebergSyntaxReceiver _capture;
         private readonly Dictionary<SyntaxTree, SemanticModel> _semanticModelCache = new Dictionary<SyntaxTree, SemanticModel>();
 
-        private SourcebergGenerator(SourceGeneratorContext generatorContext, SourcebergSyntaxReceiver capture)
+        private SourcebergGenerator(GeneratorExecutionContext generatorContext, SourcebergSyntaxReceiver capture)
             : base(capture.Startup) {
             _generatorContext = generatorContext;
             _capture = capture;
@@ -133,7 +133,7 @@ namespace Decuplr.Sourceberg.Internal {
             }
         }
 
-        public static void Execute(SourceGeneratorContext context) {
+        public static void Execute(GeneratorExecutionContext context) {
             if (context.SyntaxReceiver is SourcebergSyntaxReceiver syntaxCapture)
                 new SourcebergGenerator(context, syntaxCapture).RunGeneration();
         }

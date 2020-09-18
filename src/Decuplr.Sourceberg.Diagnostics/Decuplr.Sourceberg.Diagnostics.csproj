@@ -27,12 +27,12 @@
 	</ItemGroup>
 
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
-	<PropertyGroup>
-		<_SourceGenerator>Decuplr.Sourceberg.Diagnostics.Generator</_SourceGenerator>
-	</PropertyGroup>
 	<ItemGroup>
-		<None Include="..\Analyzers\$(_SourceGenerator)\$(OutputPath)\netstandard2.0\$(_SourceGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\Analyzers\$(SourceGenerator)\$(OutputPath)\netstandard2.0\$(SourceGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<!--
 		<None Include="$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		-->
+		<None Include="..\$(CodeBuilder)\$(OutputPath)\netstandard2.0\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 	
 </Project>
