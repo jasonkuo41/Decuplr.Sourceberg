@@ -10,7 +10,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
-		<PackageReference Include="Decuplr.Sourceberg.CodeBuilder" Version="$(Version)" PrivateAssets="true"/>
 	</ItemGroup>
 
 	<ItemGroup>
