@@ -21,7 +21,7 @@ namespace Decuplr.Sourceberg.Internal {
             var set = SymbolActionGroups.SelectMany(x => x.Group.Analyzers.Select(x => x.AnalyzerType))
                                         .Concat(SyntaxActionGroups.SelectMany(x => x.Group.Analyzers.Select(x => x.AnalyzerType)))
                                         .ToImmutableHashSet();
-            var descriptorLookup = DescriptorLocator.FromAssembly(startup.DiagnosticDescriptionDiscoveryAssemblies.Append(startup.GetType().Assembly)).ToDictionary(x => x.Id, x => x);
+            var descriptorLookup = DiagnosticDescriptorLocator.FromAssembly(startup.DiagnosticDescriptionDiscoveryAssemblies.Append(startup.GetType().Assembly)).ToDictionary(x => x.Id, x => x);
             SupportedDiagnostics = set.SelectMany(x => SourceAnalyzerBase.GetSupportedDiagnostics(x)).Select(x => descriptorLookup[x]).ToImmutableArray();
         }
 
