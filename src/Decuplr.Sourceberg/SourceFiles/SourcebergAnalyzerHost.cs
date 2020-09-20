@@ -55,7 +55,7 @@ namespace Decuplr.Sourceberg.SourceFiles {
                     }
 
                     context.RegisterCompilationEndAction(endContext => {
-                        foreach (var diagnostic in serviceScope.ServiceProvider.GetRequiredService<IDiagnosticReporter>())
+                        foreach (var diagnostic in serviceScope.ServiceProvider.GetRequiredService<DiagnosticBag>())
                             endContext.ReportDiagnostic(diagnostic);
                         serviceScope.Dispose();
                     });

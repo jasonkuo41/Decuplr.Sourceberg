@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Text;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
@@ -15,30 +17,21 @@ namespace Decuplr.Sourceberg.SourceFiles {
         public bool ContainsError => _bag.ContainsError;
 
         public DiagnosticReporter(DiagnosticBag bag) {
-
+            _bag = bag;
+            _supportedDescriptors = typeof(TReportingSource).GetCustomAttributes<SupportDiagnosticTypeAttribute>(true)
+                                                            .SelectMany(x => x.SupportedDiagnostics)
+                                                            .ToImmutableHashSet();
         }
 
         public void ReportDiagnostic(Diagnostic diagnostic) {
-            throw new NotImplementedException();
+            if (!_supportedDescriptors.Contains(diagnostic.Descriptor))
+                throw new ArgumentException($"Reported diagnostic id '{diagnostic.Descriptor.Id}' is not supported by the registered type. (Diagnostic: {diagnostic})", nameof(diagnostic));
+            _bag.ReportDiagnostic(diagnostic);
         }
 
         public void ReportDiagnostic(IEnumerable<Diagnostic> diagnostics) {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class DiagnosticBag {
-
-
-        private readonly ConcurrentBag<Diagnostic> _diagnostics = new ConcurrentBag<Diagnostic>();
-        private int _containsError;
-
-        public bool ContainsError => _containsError != 0;
-
-        public void ReportDiagnostic(Diagnostic diagnostic) {
-            var hasError = diagnostic.Severity == DiagnosticSeverity.Error ? 1 : 0;
-            Interlocked.Exchange(ref _containsError, hasError);
-            _diagnostics.Add(diagnostic);
+            foreach (var diagnostic in diagnostics)
+                ReportDiagnostic(diagnostic);
         }
     }
 }
