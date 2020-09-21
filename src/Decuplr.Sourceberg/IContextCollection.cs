@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Decuplr.Sourceberg {
     public interface IContextCollection : IEnumerable<KeyValuePair<Type, object>> {

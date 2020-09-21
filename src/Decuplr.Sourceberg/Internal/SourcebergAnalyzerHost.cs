@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Decuplr.Sourceberg.Services.Implementation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Decuplr.Sourceberg.SourceFiles {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal abstract class SourcebergAnalyzerHost<TAnalyzer> : DiagnosticAnalyzer where TAnalyzer : SourcebergAnalyzer {
+namespace Decuplr.Sourceberg.Internal {
+
+    [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1001", Justification = "Providing a base class for analyzers, it is not meant to be analyzer on itself.")]
+    internal class SourcebergAnalyzerHost<TAnalyzer> : DiagnosticAnalyzer where TAnalyzer : SourcebergAnalyzer {
 
         private readonly IServiceProvider _provider;
         private readonly GeneratedCodeAnalysisFlags _generatorFlags;
 
-        public SourcebergAnalyzerHost() {
+        protected SourcebergAnalyzerHost() {
             // create the setup instance
             var analyzerSetup = Activator.CreateInstance<TAnalyzer>();
             var serviceCollection = new ServiceCollection();
             analyzerSetup.ConfigureAnalyzerServices(serviceCollection);
+            serviceCollection.AddDefaultSourbergServices();
 
             _generatorFlags = analyzerSetup.GeneratedCodeAnalysisFlags;
             _provider = serviceCollection.BuildServiceProvider();
@@ -45,17 +49,27 @@ namespace Decuplr.Sourceberg.SourceFiles {
             context.ConfigureGeneratedCodeAnalysis(_generatorFlags);
             context.RegisterCompilationStartAction(context => {
                 var serviceScope = _provider.CreateScope();
+                var serviceProvider = serviceScope.ServiceProvider;
                 try {
-                    foreach (var syntaxNode in _provider.GetServices<ISyntaxNodeAnalyzer>()) {
+                    // Setup the context
+                    var sourceContext = serviceProvider.GetRequiredService<SourceContextAccessor>();
+                    {
+                        sourceContext.AnalyzerConfigOptions = context.Options.AnalyzerConfigOptionsProvider;
+                        sourceContext.AdditionalFiles = context.Options.AdditionalFiles;
+                        sourceContext.OnOperationCanceled = context.CancellationToken;
+                        sourceContext.ParseOptions = context.Compilation.SyntaxTrees.FirstOrDefault().Options;
+                        sourceContext.SourceCompilation = context.Compilation;
+                    }
+                    foreach (var syntaxNode in serviceProvider.GetServices<ISyntaxNodeAnalyzer>()) {
                         context.RegisterSyntaxNodeAction(syntaxNode.RunAnalysis, syntaxNode.UsingSyntaxKinds);
                     }
 
-                    foreach (var symbolAction in _provider.GetServices<ISymbolActionAnalyzer>()) {
+                    foreach (var symbolAction in serviceProvider.GetServices<ISymbolActionAnalyzer>()) {
                         context.RegisterSymbolAction(symbolAction.RunAnalysis, symbolAction.UsingSymbolKinds);
                     }
 
                     context.RegisterCompilationEndAction(endContext => {
-                        foreach (var diagnostic in serviceScope.ServiceProvider.GetRequiredService<DiagnosticBag>())
+                        foreach (var diagnostic in serviceProvider.GetRequiredService<DiagnosticBag>())
                             endContext.ReportDiagnostic(diagnostic);
                         serviceScope.Dispose();
                     });

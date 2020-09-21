@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
-namespace Decuplr.Sourceberg.SourceFiles {
+namespace Decuplr.Sourceberg.Services.Implementation {
     internal class DiagnosticReporter<TReportingSource> : IDiagnosticReporter<TReportingSource> {
 
         private readonly DiagnosticBag _bag;

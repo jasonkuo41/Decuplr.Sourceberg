@@ -7,4 +7,5 @@ namespace Decuplr.Sourceberg {
         ITypeSymbol? GetSymbol<T>();
         ITypeSymbol? GetSymbol(Type type);
     }
+
 }

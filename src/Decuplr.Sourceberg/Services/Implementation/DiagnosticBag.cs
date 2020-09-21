@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
-namespace Decuplr.Sourceberg.SourceFiles {
+namespace Decuplr.Sourceberg.Services.Implementation {
     internal class DiagnosticBag : IEnumerable<Diagnostic> {
 
         private readonly ConcurrentBag<Diagnostic> _diagnostics = new ConcurrentBag<Diagnostic>();

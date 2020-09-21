@@ -56,7 +56,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
 
         [Fact]
         public void InvalidType_Locator_ShouldThrow() {
-            Assert.Throws<ArgumentException>(() => DescriptorLocator.FromType<string>());
+            Assert.Throws<ArgumentException>(() => DiagnosticDescriptorLocator.FromAssuringType<string>());
         }
 
         [Theory]
@@ -78,7 +78,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
                 Debug.Assert(localType is { });
 
                 Assert.Equal(GetDescriptorFromReflection(generatedType), GetDescriptorFromReflection(localType));
-                Assert.Equal(DescriptorLocator.FromType(generatedType), GetDescriptorFromReflection(localType));
+                Assert.Equal(DiagnosticDescriptorLocator.FromAssuringType(generatedType), GetDescriptorFromReflection(localType));
             }
         }
     }

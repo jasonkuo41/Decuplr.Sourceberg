@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Decuplr.Sourceberg.Generation;
+using Decuplr.Sourceberg.Internal;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -58,7 +58,7 @@ namespace Decuplr.Sourceberg.Services.Implementation {
 
             public CurrentSourceSink(TypeSymbolProvider provider) : base(provider) { }
 
-            public SyntaxTree AddSource(string fileName, string sourceCode) 
+            public SyntaxTree AddSource(string fileName, string sourceCode)
                 => AddSource(new GeneratedSourceText(fileName, SourceText.From(sourceCode, encoding: Encoding.UTF8)));
 
             public SyntaxTree AddSource(GeneratedSourceText sourceText) {
@@ -85,7 +85,7 @@ namespace Decuplr.Sourceberg.Services.Implementation {
             _locatorCache = locatorCache;
             _context = accessor;
             _currentSink = new CurrentSourceSink(this);
-            Source  = new SourceSink(this);
+            Source = new SourceSink(this);
         }
 
         public SyntaxTree AddSource(string fileName, string sourceCode) => _currentSink.AddSource(fileName, sourceCode);
