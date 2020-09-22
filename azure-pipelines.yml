@@ -3,6 +3,8 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+name: $(Date:yyyyMMdd)$(Rev:.rr)
+
 trigger:
 - master
 
@@ -13,6 +15,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- script: echo 'Build Number - $(Build.BuildNumber)'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
@@ -40,10 +45,8 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
-    versioningScheme: 'byPrereleaseNumber'
-    majorVersion: '1'
-    minorVersion: '0'
-    patchVersion: '0'
+    versioningScheme: 'off'
+    buildProperties: '--version-suffix $(Build.BuildNumber)'
 
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
