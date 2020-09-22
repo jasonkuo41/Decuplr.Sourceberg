@@ -46,8 +46,7 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
-    versioningScheme: 'off'
-    buildProperties: '--version-suffix $(Build.BuildNumber)'
+    versioningScheme: 'byBuildNumber'
 
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
