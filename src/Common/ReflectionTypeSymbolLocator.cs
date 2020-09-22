@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 
 namespace Decuplr.Sourceberg {
@@ -20,7 +22,7 @@ namespace Decuplr.Sourceberg {
     }
 
     internal class ReflectionTypeSymbolLocator {
-        private readonly ConcurrentDictionary<Type, IAssemblySymbol?> _typeAssemblyCache = new ConcurrentDictionary<Type, IAssemblySymbol?>();
+        private readonly ConcurrentDictionary<AssemblyName, IAssemblySymbol?> _typeAssemblyCache = new ConcurrentDictionary<AssemblyName, IAssemblySymbol?>();
         private readonly ConcurrentDictionary<Type, ITypeSymbol?> _typeSymbolCache = new ConcurrentDictionary<Type, ITypeSymbol?>();
 
         public Compilation Compilation { get; }
@@ -81,15 +83,34 @@ namespace Decuplr.Sourceberg {
             _ => GetAssemblySymbol(type)?.GetTypeByMetadataName(type.FullName)
         };
 
-        public IAssemblySymbol? GetAssemblySymbol(Type type) {
-            if (_typeAssemblyCache.TryGetValue(type, out var symbol))
+        internal static AssemblyIdentity GetAssemblyIdentity(AssemblyName name) {
+            // AssemblyDef always has full key or no key:
+            var publicKeyBytes = name.GetPublicKey();
+            ImmutableArray<byte> publicKey = (publicKeyBytes != null) ? ImmutableArray.Create(publicKeyBytes) : ImmutableArray<byte>.Empty;
+
+            return new AssemblyIdentity(
+                name.Name,
+                name.Version,
+                name.CultureName,
+                publicKey,
+                hasPublicKey: publicKey.Length > 0,
+                isRetargetable: (name.Flags & AssemblyNameFlags.Retargetable) != 0,
+                contentType: name.ContentType);
+        }
+
+        public IAssemblySymbol? GetAssemblySymbol(Type type) => GetAssemblySymbol(type.Assembly);
+
+        public IAssemblySymbol GetAssemblySymbol(Assembly assembly) => GetAssemblySymbol(assembly.GetName());
+
+        public IAssemblySymbol? GetAssemblySymbol(AssemblyName assemblyName) {
+            if (_typeAssemblyCache.TryGetValue(assemblyName, out var symbol))
                 return symbol;
 
-            var typeAssemblyId = AssemblyIdentity.FromAssemblyDefinition(type.Assembly);
+            var typeAssemblyId = GetAssemblyIdentity(assemblyName);
             var queryResult = Compilation.References.Select(reference => Compilation.GetAssemblyOrModuleSymbol(reference))
                                                  .FirstOrDefault(x => x is IAssemblySymbol asmSymbol && asmSymbol.Identity.Equals(typeAssemblyId));
             var assembly = queryResult as IAssemblySymbol;
-            _typeAssemblyCache.TryAdd(type, assembly);
+            _typeAssemblyCache.TryAdd(assemblyName, assembly);
             return assembly;
         }
 

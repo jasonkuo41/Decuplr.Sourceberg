@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -44,7 +45,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
 
         public void Execute(GeneratorExecutionContext context) {
             try {
-                if (!(context.SyntaxReceiver is SyntaxCapture capture))
+                if (context.SyntaxReceiver is not SyntaxCapture capture)
                     return;
                 var locator = new ReflectionTypeSymbolLocator(context.Compilation);
                 if (!DiagnosticGroupTypeAnalysis.TryGetAnalysis(locator, context.CancellationToken, out var typeAnalysis))
@@ -71,6 +72,11 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                     //var code = DiagnosticGroupCodeBuilder.Generate(info);
                     var code = new DiagnosticGroupCodeBuilder(locator, info).ToString();
                     var sourceText = SourceText.From(code, Encoding.UTF8);
+#if DEBUG
+                    Directory.CreateDirectory("./.generated");
+                    File.WriteAllText($"./.generated/{type}.cs", code);
+                    File.WriteAllText($"./.generated/debug.{type}.cs", $"");
+#endif
                     context.AddSource($"{type}.diagnostics.generated", sourceText);
                 }
                 ReportDuplicate(context, ddList);

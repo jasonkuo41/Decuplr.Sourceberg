@@ -10,8 +10,6 @@ using Xunit.Abstractions;
 namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
     static class OutputUtilities {
 
-        private delegate bool ComparsionDelegate<TSource, TCompare>([NotNull] TSource source, [NotNull] TCompare compare);
-
         public static void WriteSyntaxTrees(this ITestOutputHelper output, Compilation compilation) {
             output.WriteSyntaxTrees(compilation.SyntaxTrees);
         }

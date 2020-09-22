@@ -10,7 +10,7 @@ namespace Decuplr.Sourceberg.Generator {
             return item;
         }
 
-        public static bool InheritFrom(this ITypeSymbol symbol, INamedTypeSymbol baseSymbol) {
+        public static bool InheritFrom(this ITypeSymbol symbol, ITypeSymbol baseSymbol) {
             var currentBaseType = symbol.BaseType;
             while(currentBaseType is { }) {
                 if (baseSymbol.Equals(currentBaseType, SymbolEqualityComparer.Default))

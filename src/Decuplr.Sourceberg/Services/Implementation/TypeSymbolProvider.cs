@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using Decuplr.Sourceberg.Internal;
 using Microsoft.CodeAnalysis;
@@ -50,6 +51,8 @@ namespace Decuplr.Sourceberg.Services.Implementation {
 
             public ITypeSymbol? GetSymbol(Type type) => SymbolLocator.GetTypeSymbol(type);
 
+            public IAssemblySymbol? GetAssemblySymbol(Assembly assembly) => SymbolLocator.GetAssemblySymbol(assembly);
+            public IAssemblySymbol? GetAssemblySymbol(AssemblyName assembly) => SymbolLocator.GetAssemblySymbol(assembly);
         }
 
         private class CurrentSourceSink : SourceSink {

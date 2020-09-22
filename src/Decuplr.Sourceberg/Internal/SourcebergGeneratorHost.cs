@@ -21,15 +21,7 @@ namespace Decuplr.Sourceberg.Internal {
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
             = new DiagnosticDescriptor("SCBRGERR", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured, source generator {1} will not proceed and contribute to the compilation : {2}", "InternalError", DiagnosticSeverity.Warning, true);
 
-        private readonly Type _startupType;
-
-        public SourcebergGeneratorHost(Type type) {
-            if (!type.GetInterfaces().Any(x => x == typeof(ISourceGenerator)))
-                throw new ArgumentException($"Type '{type}' must implement '{nameof(ISourceGenerator)}'", nameof(type));
-            if (!type.IsValueType && !type.IsClass)
-                throw new ArgumentException($"Type can only be class and struct, and must not be abstract", nameof(type));
-            _startupType = type;
-        }
+        protected abstract Type StartupType { get; }
 
         public void Execute(GeneratorExecutionContext context) {
             if (!(context.SyntaxReceiver is AggregatedSyntaxCapture asc))
@@ -71,13 +63,15 @@ namespace Decuplr.Sourceberg.Internal {
                 }
             }
             catch (Exception exception) {
-                context.ReportDiagnostic(Diagnostic.Create(UnexpectedExceptionDescriptor, Location.None, exception.GetType(), _startupType, exception));
+                context.ReportDiagnostic(Diagnostic.Create(UnexpectedExceptionDescriptor, Location.None, exception.GetType(), StartupType, exception));
             }
         }
 
         public void Initialize(GeneratorInitializationContext context) {
+            if (!StartupType.GetInterfaces().Any(x => x == typeof(ISourceGenerator)))
+                throw new ArgumentException($"Type '{StartupType}' must implement '{nameof(ISourceGenerator)}'", nameof(StartupType));
             // We can also DI this in the future.
-            var generator = (ISourcebergGeneratorGroup)Activator.CreateInstance(_startupType);
+            var generator = (ISourcebergGeneratorGroup)Activator.CreateInstance(StartupType);
             var collection = new ServiceCollection();
 
             collection.AddDefaultSourbergServices();

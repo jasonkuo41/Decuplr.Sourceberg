@@ -10,4 +10,10 @@
 		<DiagnosticsGenerator>Decuplr.Sourceberg.Diagnostics.Generator</DiagnosticsGenerator>
 		<CodeBuilder>Decuplr.Sourceberg.CodeBuilder</CodeBuilder>
 	</PropertyGroup>
+	<Target Name="TestMessage" AfterTargets="Build" >
+
+		<!-- Use $(Property Name) to reference a property -->
+		<Message Text="Current Version: $(Version)" Importance="high"/>
+
+	</Target>
 </Project>

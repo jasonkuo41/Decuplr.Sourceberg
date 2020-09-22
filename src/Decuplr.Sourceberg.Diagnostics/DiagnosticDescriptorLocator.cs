@@ -6,7 +6,7 @@ using System.Reflection;
 using Microsoft.CodeAnalysis;
 
 namespace Decuplr {
-    public static class Ensure {
+    internal static class Ensure {
         public static T NotNull<T>(T item, string? name = null) where T : class {
             if (item is { })
                 return item;
@@ -44,8 +44,8 @@ namespace Decuplr.Sourceberg.Diagnostics {
                 faultKind = FaultKind.ForgotGeneration;
                 return false;
             }
-            propertyInfo = type.GetProperty(exportExport.ConstructorArguments[0].Value as string, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            if (propertyInfo is null || !propertyInfo.GetMethod.IsStatic || typeof(IEnumerable<DiagnosticDescriptor>).IsAssignableFrom(propertyInfo.PropertyType)) {
+            propertyInfo = type.GetProperty(exportExport.ConstructorArguments[0].Value as string, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+            if (propertyInfo is null || !propertyInfo.GetMethod.IsStatic || !typeof(IEnumerable<DiagnosticDescriptor>).IsAssignableFrom(propertyInfo.PropertyType)) {
                 faultKind = FaultKind.PropertyError;
                 return false;
             }
