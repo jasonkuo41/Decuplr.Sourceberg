@@ -11,6 +11,8 @@ namespace Decuplr.Sourceberg {
 
         private readonly List<string> _usingNamespaces = new List<string>();
         private readonly List<string> _attributes = new List<string>();
+        private readonly HashSet<INamedTypeSymbol> _implementSymbols = new HashSet<INamedTypeSymbol>();
+        private INamedTypeSymbol? _inheritSymbol;
 
         private Action<CodeBlockBuilder>? _blockActions;
 
@@ -22,6 +24,27 @@ namespace Decuplr.Sourceberg {
 
         public CodeExtensionBuilder Using(string namespaceName) {
             _usingNamespaces.Add(namespaceName);
+            return this;
+        }
+
+        public CodeExtensionBuilder Implement(INamedTypeSymbol symbol) {
+            if (symbol.TypeKind != TypeKind.Interface)
+                throw new ArgumentException($"Type {symbol} is not a interface, thus cannot be implemented.");
+            _implementSymbols.Add(symbol);
+            return this;
+        }
+
+        // Can not inherit if the type already inherit other kind of symbol
+        // Will discard the old result if called multiple times
+        public CodeExtensionBuilder Inherit(INamedTypeSymbol symbol) {
+            if (ExtendingSymbol.BaseType is not null) {
+                if (!ExtendingSymbol.BaseType.Equals(symbol, SymbolEqualityComparer.Default))
+                    throw new ArgumentException($"Type has already inherit {ExtendingSymbol.BaseType} and is not {symbol}", nameof(symbol));
+                return this;
+            }
+            if (symbol.IsSealed)
+                throw new ArgumentException($"Cannot inherit sealed symbol {symbol}", nameof(symbol));
+            _inheritSymbol = symbol;
             return this;
         }
 
@@ -66,6 +89,8 @@ namespace Decuplr.Sourceberg {
         }
 
         public override string ToString() {
+            if (_blockActions is null)
+                return string.Empty;
             var builder = new CodeDocumentBuilder(ExtendingSymbol.ContainingNamespace.ToString());
             foreach (var namespaceName in _usingNamespaces) {
                 builder.Using(namespaceName);
@@ -83,7 +108,14 @@ namespace Decuplr.Sourceberg {
                 foreach (var attr in _attributes) {
                     builder.Attribute(attr);
                 }
-                builder.AddBlock(GetDeclarationString(ExtendingSymbol), _blockActions);
+
+                var declartionString = GetDeclarationString(ExtendingSymbol);
+                builder.AddBlock($"{declartionString} : {string.Join(", ", _implementSymbols)}", builder => { });
+                if (_inheritSymbol is not null)
+                    builder.AddBlock($"{declartionString} : {_inheritSymbol}", builder => { });
+                foreach (var action in _blockActions.GetInvocationList().Cast<Action<CodeBlockBuilder>>()) {
+                    builder.AddBlock(declartionString, action);
+                }
             }
         }
     }

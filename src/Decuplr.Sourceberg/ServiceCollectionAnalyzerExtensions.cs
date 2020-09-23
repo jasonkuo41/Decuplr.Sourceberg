@@ -14,7 +14,7 @@ namespace Decuplr.Sourceberg {
             return services;
         }
 
-        public static IServiceCollection AddSourcebergAnalyzer<TAnalyzer>(this IServiceCollection services) where TAnalyzer : SourcebergAnalyzer {
+        public static IServiceCollection AddSourcebergAnalyzer<TAnalyzer>(this IServiceCollection services) where TAnalyzer : SourcebergAnalyzerGroup {
             return services.AddScoped<DiagnosticAnalyzer, SourcebergAnalyzerHost<TAnalyzer>>();
         }
 

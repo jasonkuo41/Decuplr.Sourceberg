@@ -21,10 +21,12 @@ namespace Decuplr.Sourceberg.Internal {
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
             = new DiagnosticDescriptor("SCBRGERR", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured, source generator {1} will not proceed and contribute to the compilation : {2}", "InternalError", DiagnosticSeverity.Warning, true);
 
+        internal const string StartupTypeName = nameof(StartupType);
+
         protected abstract Type StartupType { get; }
 
         public void Execute(GeneratorExecutionContext context) {
-            if (!(context.SyntaxReceiver is AggregatedSyntaxCapture asc))
+            if (context.SyntaxReceiver is not AggregatedSyntaxCapture asc)
                 return;
             // Ensure no analyzer has failed
             using var scope = asc.ServiceProvider.CreateScope();

@@ -37,8 +37,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             return returnSymbol;
         }
 
-        private DiagnosticDescriptionAttribute? GetDescriptionAttribute(ISymbol member, DiagnosticReporter diagnostReport) {
-            var memberAttribute = member.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals<DiagnosticDescriptionAttribute>(_locator));
+        private DiagnosticDescriptionAttribute? GetDescriptionAttribute(AttributeData memberAttribute, DiagnosticReporter diagnostReport) {
             var ctor = memberAttribute.ConstructorArguments;
             var args = memberAttribute.NamedArguments;
             var success = true;
@@ -74,7 +73,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
                 diagnosticReport.Add(DiagnosticSource.MemberShouldReturnDescriptor(member, returnSymbol));
             }
             // we run once to make sure diagnostic is all collected
-            var result = GetDescriptionAttribute(member, diagnosticReport);
+            var result = GetDescriptionAttribute(memberAttribute, diagnosticReport);
             return diagnosticReport.ContainsError ? null : result;
         }
     }

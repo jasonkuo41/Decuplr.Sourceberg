@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -75,7 +76,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
 #if DEBUG
                     Directory.CreateDirectory("./.generated");
                     File.WriteAllText($"./.generated/{type}.cs", code);
-                    File.WriteAllText($"./.generated/debug.{type}.cs", $"");
+                    File.WriteAllText($"./.generated/debug.{type}.cs", $"{locator.GetAssemblySymbol(typeof(List<>).Assembly)} {locator._compilingCoreLib} e {locator._executionCoreLib}");
 #endif
                     context.AddSource($"{type}.diagnostics.generated", sourceText);
                 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Decuplr.Sourceberg.Services.Implementation;
@@ -11,15 +11,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Decuplr.Sourceberg.Internal {
 
-    [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1001", Justification = "Providing a base class for analyzers, it is not meant to be analyzer on itself.")]
-    internal class SourcebergAnalyzerHost<TAnalyzer> : DiagnosticAnalyzer where TAnalyzer : SourcebergAnalyzer {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public abstract class SourcebergAnalyzerHost : DiagnosticAnalyzer {
 
         private readonly IServiceProvider _provider;
         private readonly GeneratedCodeAnalysisFlags _generatorFlags;
 
+        internal const string AnalyzerTypeName = nameof(AnalyzerType);
+
+        protected abstract Type AnalyzerType { get; }
+
         protected SourcebergAnalyzerHost() {
             // create the setup instance
-            var analyzerSetup = Activator.CreateInstance<TAnalyzer>();
+            var analyzerSetup = (SourcebergAnalyzerGroup)Activator.CreateInstance(AnalyzerType);
             var serviceCollection = new ServiceCollection();
             analyzerSetup.ConfigureAnalyzerServices(serviceCollection);
             serviceCollection.AddDefaultSourbergServices();
@@ -29,7 +33,7 @@ namespace Decuplr.Sourceberg.Internal {
             SupportedDiagnostics = GetSupportedDiagnostics(serviceCollection);
         }
 
-        public SourcebergAnalyzerHost(TAnalyzer analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
+        public SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
             _generatorFlags = analyzer.GeneratedCodeAnalysisFlags;
             _provider = serviceProvider;
             SupportedDiagnostics = GetSupportedDiagnostics(supportedService);

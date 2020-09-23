@@ -62,7 +62,7 @@ namespace Decuplr.Sourceberg.Generator {
                                                 .Select(declaredSyntax => GetSemanticModel(declaredSyntax.SyntaxTree).GetDeclaredSymbol(declaredSyntax))
                                                 .WhereNotNull();
             var hasReference = true;
-            var analyzerGroupSymbol = _type.GetSymbol<SourcebergAnalyzer>().NotNull(ref hasReference);
+            var analyzerGroupSymbol = _type.GetSymbol<SourcebergAnalyzerGroup>().NotNull(ref hasReference);
             var generatorGroupSymbol = _type.GetSymbol<ISourcebergGeneratorGroup>().NotNull(ref hasReference);
             var analyzerAttrSymbol = _type.GetSymbol<SourcebergAnalyzerAttribute>().NotNull(ref hasReference);
             var hostSymbol = _type.GetSymbol<SourcebergGeneratorHost>().NotNull(ref hasReference);

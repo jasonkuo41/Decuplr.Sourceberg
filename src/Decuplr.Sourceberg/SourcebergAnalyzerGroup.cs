@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Decuplr.Sourceberg {
-    public abstract class SourcebergAnalyzer {
+    public abstract class SourcebergAnalyzerGroup {
         public virtual GeneratedCodeAnalysisFlags GeneratedCodeAnalysisFlags { get; } = GeneratedCodeAnalysisFlags.None;
 
         public abstract void ConfigureAnalyzerServices(IServiceCollection services);

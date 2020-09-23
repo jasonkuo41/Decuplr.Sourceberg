@@ -22,13 +22,35 @@ namespace Decuplr.Sourceberg {
     }
 
     internal class ReflectionTypeSymbolLocator {
+
+        private class AssemblyNameEquality : IEqualityComparer<AssemblyName> {
+            public bool Equals(AssemblyName x, AssemblyName y) {
+                return x.FullName.Equals(y.FullName);
+            }
+
+            public int GetHashCode(AssemblyName name) => HashCode.Combine(name.FullName);
+
+            public static AssemblyNameEquality Instance { get; } = new AssemblyNameEquality();
+        }
+
         private readonly ConcurrentDictionary<AssemblyName, IAssemblySymbol?> _typeAssemblyCache = new ConcurrentDictionary<AssemblyName, IAssemblySymbol?>();
         private readonly ConcurrentDictionary<Type, ITypeSymbol?> _typeSymbolCache = new ConcurrentDictionary<Type, ITypeSymbol?>();
+        internal readonly IAssemblySymbol? _compilingCoreLib;
+        internal readonly AssemblyName _executionCoreLib;
 
         public Compilation Compilation { get; }
 
         public ReflectionTypeSymbolLocator(Compilation compilation) {
             Compilation = compilation;
+            var candidateSymbol = compilation.GetTypeByMetadataName("System.Void");
+            if (candidateSymbol is null) {
+                candidateSymbol = compilation.References.Select(x => compilation.GetAssemblyOrModuleSymbol(x))
+                                                        .Select(x => x as IAssemblySymbol)
+                                                        .Select(x => x?.GetTypeByMetadataName("System.Void"))
+                                                        .First(x => x is not null && x.SpecialType == SpecialType.System_Void);
+            }
+            _compilingCoreLib = candidateSymbol?.ContainingAssembly;
+            _executionCoreLib = typeof(void).Assembly.GetName();
         }
 
         private ITypeSymbol? GetArraySymbol(Type type) {
@@ -100,9 +122,12 @@ namespace Decuplr.Sourceberg {
 
         public IAssemblySymbol? GetAssemblySymbol(Type type) => GetAssemblySymbol(type.Assembly);
 
-        public IAssemblySymbol GetAssemblySymbol(Assembly assembly) => GetAssemblySymbol(assembly.GetName());
+        public IAssemblySymbol? GetAssemblySymbol(Assembly assembly) => GetAssemblySymbol(assembly.GetName());
 
         public IAssemblySymbol? GetAssemblySymbol(AssemblyName assemblyName) {
+            if (assemblyName.FullName == _executionCoreLib.FullName)
+                return _compilingCoreLib;
+
             if (_typeAssemblyCache.TryGetValue(assemblyName, out var symbol))
                 return symbol;
 

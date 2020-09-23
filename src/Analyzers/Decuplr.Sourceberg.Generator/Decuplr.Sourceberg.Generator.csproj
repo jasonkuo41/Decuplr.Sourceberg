@@ -24,6 +24,7 @@
 
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 		<ProjectReference Include="..\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
 			<OutputItemType>Analyzer</OutputItemType>
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>

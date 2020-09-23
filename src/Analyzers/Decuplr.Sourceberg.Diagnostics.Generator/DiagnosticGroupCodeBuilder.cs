@@ -15,7 +15,7 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             _diagnosticInfo = typeInfo;
         }
 
-        private ITypeSymbol Symbol<T>() => _locator.GetTypeSymbol<T>();
+        private ITypeSymbol? Symbol<T>() => _locator.GetTypeSymbol<T>();
 
         private string ToCSharpString(object item) => item switch
         {
@@ -26,10 +26,11 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         };
 
         public override string ToString() {
-            Debug.Assert(_diagnosticInfo.ContainingSymbol is INamedTypeSymbol);
+            var containingSymbol = _diagnosticInfo.ContainingSymbol as INamedTypeSymbol;
+            Debug.Assert(containingSymbol is not null);
             const string exportName = "__generated_yield_collection";
 
-            var builder = new CodeExtensionBuilder(_diagnosticInfo.ContainingSymbol as INamedTypeSymbol);
+            var builder = new CodeExtensionBuilder(containingSymbol);
 
             builder.Attribute($"{Symbol<ExportDiagnosticDescriptorMethodAttribute>()}(\"{exportName}\")");
             builder.ExtendSymbol(block => {

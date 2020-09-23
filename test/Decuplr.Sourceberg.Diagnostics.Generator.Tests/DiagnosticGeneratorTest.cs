@@ -50,8 +50,10 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator.Tests {
         public async Task ErrorDiagnosticTest(FileTestSource test) {
             var result = await test.CreateCompilationAsync(UsingReferences);
             var driver = GetGeneratorDriver();
+            _output.WriteLine(typeof(List<>).AssemblyQualifiedName);
             driver.RunGeneratorsAndUpdateCompilation(result.Compilation, out var newCompilation, out var diagnostics);
             test.AssertDiagnostics(diagnostics);
+
         }
 
         [Fact]
