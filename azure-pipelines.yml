@@ -47,10 +47,12 @@ steps:
     command: 'pack'
     packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
     versioningScheme: 'byPrereleaseNumber'
-    majorVersion: '1'
-    minorVersion: '0'
-    patchVersion: '0'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
+    versioningScheme: 'byPrereleaseNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1

@@ -29,7 +29,7 @@
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
 	<ItemGroup>
 		<None Include="..\Analyzers\$(DiagnosticsGenerator)\$(Std20OutputPath)\$(DiagnosticsGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(Std20OutputPath)\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(Std20OutputPath)\$(Diagnostics).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="..\$(CodeBuilder)\$(Std20OutputPath)\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 	

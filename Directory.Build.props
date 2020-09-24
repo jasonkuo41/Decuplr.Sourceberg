@@ -15,5 +15,17 @@
 		<DiagnosticsGenerator>$(Diagnostics).Generator</DiagnosticsGenerator>
 		<CodeBuilder>$(Sourceberg).CodeBuilder</CodeBuilder>
 	</PropertyGroup>
+
+
+	<!-- Defines some core package name -->
+	<PropertyGroup>
+		<MSDependencyInjection>Microsoft.Extensions.DependencyInjection</MSDependencyInjection>
+		<MSDependencyInjectionAbstraction>$(MSDependencyInjection).Abstractions</MSDependencyInjectionAbstraction>
+	</PropertyGroup>
+
+	<!-- Defines some core package version -->
+	<PropertyGroup>
+		<MSDependencyInjectionVersion>3.1.8</MSDependencyInjectionVersion>
+	</PropertyGroup>
 	
 </Project>
