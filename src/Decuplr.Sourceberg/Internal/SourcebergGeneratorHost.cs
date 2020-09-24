@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Decuplr.Sourceberg.Services.Implementation;
@@ -21,9 +22,9 @@ namespace Decuplr.Sourceberg.Internal {
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
             = new DiagnosticDescriptor("SCBRGERR", "An unexpected source generator exception has occured.", "An unexpected exception {0} has occured, source generator {1} will not proceed and contribute to the compilation : {2}", "InternalError", DiagnosticSeverity.Warning, true);
 
-        internal const string StartupTypeName = nameof(StartupType);
+        internal const string StartupTypeName = nameof(GeneratorGroupType);
 
-        protected abstract Type StartupType { get; }
+        protected abstract Type GeneratorGroupType { get; }
 
         public void Execute(GeneratorExecutionContext context) {
             if (context.SyntaxReceiver is not AggregatedSyntaxCapture asc)
@@ -65,23 +66,23 @@ namespace Decuplr.Sourceberg.Internal {
                 }
             }
             catch (Exception exception) {
-                context.ReportDiagnostic(Diagnostic.Create(UnexpectedExceptionDescriptor, Location.None, exception.GetType(), StartupType, exception));
+                context.ReportDiagnostic(Diagnostic.Create(UnexpectedExceptionDescriptor, Location.None, exception.GetType(), GeneratorGroupType, exception));
             }
         }
 
         public void Initialize(GeneratorInitializationContext context) {
-            if (!StartupType.GetInterfaces().Any(x => x == typeof(ISourceGenerator)))
-                throw new ArgumentException($"Type '{StartupType}' must implement '{nameof(ISourceGenerator)}'", nameof(StartupType));
+            if (!GeneratorGroupType.GetInterfaces().Any(x => x == typeof(ISourceGenerator)))
+                throw new ArgumentException($"Type '{GeneratorGroupType}' must implement '{nameof(ISourceGenerator)}'", nameof(GeneratorGroupType));
             // We can also DI this in the future.
-            var generator = (ISourcebergGeneratorGroup)Activator.CreateInstance(StartupType);
+            var generator = (ISourcebergGeneratorGroup)Activator.CreateInstance(GeneratorGroupType);
             var collection = new ServiceCollection();
 
-            collection.AddDefaultSourbergServices();
+            collection.AddDefaultSourbergServices(true);
             collection.AddSingleton(generator);
             collection.AddSingleton<ISyntaxReceiver, PredicateSyntaxCapture>();
             collection.AddSingleton<AggregatedSyntaxCapture>();
 
-            generator.ConfigureAnalyzers(collection);
+            generator.ConfigureServices(collection, new GeneratorServiceCollection(collection));
 
             var serviceProvider = collection.BuildServiceProvider();
             context.RegisterForSyntaxNotifications(serviceProvider.GetRequiredService<AggregatedSyntaxCapture>);

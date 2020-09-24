@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Decuplr.Sourceberg {
     public interface ISourcebergGeneratorGroup {
-        void ConfigureAnalyzers(IServiceCollection services);
+        void ConfigureServices(IServiceCollection services, IGeneratorServiceCollection generatorService);
 
         bool ShouldCaptureSyntax(SyntaxNode node);
     }

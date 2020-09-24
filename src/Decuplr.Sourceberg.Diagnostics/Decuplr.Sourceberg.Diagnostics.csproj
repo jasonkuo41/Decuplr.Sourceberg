@@ -28,9 +28,9 @@
 
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
 	<ItemGroup>
-		<None Include="..\Analyzers\$(DiagnosticsGenerator)\$(OutputPath)\netstandard2.0\$(DiagnosticsGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(OutputPath)\netstandard2.0\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="..\$(CodeBuilder)\$(OutputPath)\netstandard2.0\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\Analyzers\$(DiagnosticsGenerator)\$(Std20OutputPath)\$(DiagnosticsGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(Std20OutputPath)\Decuplr.Sourceberg.Diagnostics.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\$(CodeBuilder)\$(Std20OutputPath)\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 	
 </Project>

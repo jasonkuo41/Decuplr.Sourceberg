@@ -38,5 +38,13 @@ namespace Decuplr {
             }
         }
 
+        public static bool ImplementsOrInherits(this Type source, Type target) {
+            if (target.IsInterface)
+                return source.GetInterfaces().Any(x => x.Equals(target));
+            return source.IsSubclassOf(target);
+        }
+
+        public static bool ImplementsOrInherits<T>(this Type source) => source.ImplementsOrInherits(typeof(T));
+
     }
 }

@@ -10,20 +10,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.8.0-3.final" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="..\..\Common\CollectionExtensions.cs" Link=".common\CollectionExtensions.cs" />
 		<Compile Include="..\..\Common\Ensure.cs" Link=".common\Ensure.cs" />
 	</ItemGroup>
 
-
 	<ItemGroup>
+		<ProjectReference Include="..\..\Decuplr.Sourceberg\Decuplr.Sourceberg.csproj" />
 		<ProjectReference Include="..\..\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 		<ProjectReference Include="..\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
 			<OutputItemType>Analyzer</OutputItemType>
@@ -31,19 +28,10 @@
 			<SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
 		</ProjectReference>
 	</ItemGroup>
-	
-	<ItemGroup Condition="$(Configuration) == 'DEBUG'">
-		<ProjectReference Include="..\..\Decuplr.Sourceberg\Decuplr.Sourceberg.csproj" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(Configuration) == 'RELEASE'">
-		<PackageReference Include="Decuplr.Sourceberg.Diagnostics" Version="$(Version)" />
-		<PackageReference Include="Decuplr.Sourceberg" Version="$(Version)" IncludeAssets="compile" />
-	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-		<NoWarn>$(NoWarn);8600;8601;8602;8603;8604</NoWarn>
+		<NoWarn>$(NoWarn);8600;8601;8602;8603;8604;8762</NoWarn>
 	</PropertyGroup>
 
 </Project>

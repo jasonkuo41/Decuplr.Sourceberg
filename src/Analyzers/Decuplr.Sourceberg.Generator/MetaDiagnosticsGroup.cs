@@ -2,12 +2,13 @@
 using Decuplr.Sourceberg.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-// Disable nullable to remove unwanted warning
-#nullable disable
 
 namespace Decuplr.Sourceberg.Generator {
     [DiagnosticGroup("SRG", "Decuplr.Sourceberg")]
     internal partial class MetaDiagnosticsGroup {
+
+// Disable nullable to remove unwanted warning
+#nullable disable
 
         [DiagnosticDescription(1, DiagnosticSeverity.Warning,
             "Sourceberg Generator or Analyzer should be marked with SourcebergAnalyzerAttribute.",
@@ -38,6 +39,8 @@ namespace Decuplr.Sourceberg.Generator {
             "Sourceberg Generator or Analyzer group '{0}'s exporting type '{1}' is not allowed because it's not a valid type or is not in source."
         )]
         private readonly static DiagnosticDescriptor d_InvalidExporting;
+
+#nullable enable
 
         public static Diagnostic NoSourceAnalzyerAttribute(INamedTypeSymbol symbol) 
             => Diagnostic.Create(d_NoSourceAnalyzerAttribute, symbol.Locations[0], symbol.Locations.Skip(1), symbol);

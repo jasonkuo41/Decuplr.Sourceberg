@@ -1,0 +1,7 @@
+﻿<Project>
+
+	<PropertyGroup>
+		<Std20OutputPath>$(OutputPath)\netstandard2.0</Std20OutputPath>
+	</PropertyGroup>
+	
+</Project>

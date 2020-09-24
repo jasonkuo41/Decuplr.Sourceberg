@@ -6,8 +6,14 @@
 		<PreReleaseVersionLabel>1</PreReleaseVersionLabel>
 		<VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
 	</PropertyGroup>
+
+	<!-- Define some project name for reference use -->
 	<PropertyGroup>
-		<DiagnosticsGenerator>Decuplr.Sourceberg.Diagnostics.Generator</DiagnosticsGenerator>
-		<CodeBuilder>Decuplr.Sourceberg.CodeBuilder</CodeBuilder>
+		<Sourceberg>Decuplr.Sourceberg</Sourceberg>
+		<SourcebergGenerator>$(Sourceberg).Generator</SourcebergGenerator>
+		<Diagnostics>$(Sourceberg).Diagnostics</Diagnostics>
+		<DiagnosticsGenerator>$(Diagnostics).Generator</DiagnosticsGenerator>
+		<CodeBuilder>$(Sourceberg).CodeBuilder</CodeBuilder>
 	</PropertyGroup>
+	
 </Project>

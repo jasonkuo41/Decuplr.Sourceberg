@@ -17,23 +17,23 @@ namespace Decuplr.Sourceberg.Internal {
         private readonly IServiceProvider _provider;
         private readonly GeneratedCodeAnalysisFlags _generatorFlags;
 
-        internal const string AnalyzerTypeName = nameof(AnalyzerType);
+        internal const string AnalyzerTypeName = nameof(AnalyzerGroupType);
 
-        protected abstract Type AnalyzerType { get; }
+        protected abstract Type AnalyzerGroupType { get; }
 
         protected SourcebergAnalyzerHost() {
             // create the setup instance
-            var analyzerSetup = (SourcebergAnalyzerGroup)Activator.CreateInstance(AnalyzerType);
-            var serviceCollection = new ServiceCollection();
+            var analyzerSetup = (SourcebergAnalyzerGroup)Activator.CreateInstance(AnalyzerGroupType);
+            var serviceCollection = new ServiceCollection().AddDefaultSourbergServices(false);
             analyzerSetup.ConfigureAnalyzerServices(serviceCollection);
-            serviceCollection.AddDefaultSourbergServices();
 
             _generatorFlags = analyzerSetup.GeneratedCodeAnalysisFlags;
             _provider = serviceCollection.BuildServiceProvider();
             SupportedDiagnostics = GetSupportedDiagnostics(serviceCollection);
         }
 
-        public SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
+        internal SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
+            // create the setup instance
             _generatorFlags = analyzer.GeneratedCodeAnalysisFlags;
             _provider = serviceProvider;
             SupportedDiagnostics = GetSupportedDiagnostics(supportedService);
