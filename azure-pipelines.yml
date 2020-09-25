@@ -40,8 +40,8 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    arguments: '--configuration $(buildConfiguration)'
-  displayName: 'dotnet build $(buildConfiguration)'
+    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
+  displayName: 'dotnet build $(buildConfiguration) (CLI Build)'
 
 - task: DotNetCoreCLI@2
   inputs:
