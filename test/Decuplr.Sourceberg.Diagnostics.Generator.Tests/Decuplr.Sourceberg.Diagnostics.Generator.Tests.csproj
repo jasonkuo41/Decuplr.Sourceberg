@@ -21,10 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Analyzers\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
-			<SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
-		</ProjectReference>
-		<ProjectReference Include="..\..\src\Decuplr.Sourceberg.Diagnostics\Decuplr.Sourceberg.Diagnostics.csproj" />
+		<ProjectReference Include="..\..\src\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj" />
 		<ProjectReference Include="..\Decuplr.Sourceberg.TestUtilities\Decuplr.Sourceberg.TestUtilities.csproj" />
 	</ItemGroup>
 
