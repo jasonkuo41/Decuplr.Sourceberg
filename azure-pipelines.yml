@@ -18,6 +18,13 @@ steps:
 
 - script: echo 'Build Number - $(Build.BuildNumber)'
 
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '5.0.*'
+    vsVersion: '16.8.0'
+    includePreviewVersions: true
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
