@@ -13,6 +13,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  Suffix: 'preview.$(Date:yyyyMMdd)$(Rev:.rr)'
 
 steps:
 
@@ -39,7 +40,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true /p:MyVersionSuffix=$(Suffix) -p:BuildDateTime=$(Date:yyyyMMdd)$(Rev:.rr)'
   displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
@@ -54,7 +55,7 @@ steps:
     nobuild: true
     includesymbols: true
     packagesToPack: '**/*.csproj'
-    versioningScheme: 'byPrereleaseNumber'
+    buildProperties: 'MyVersionSuffix=$(Suffix)'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1

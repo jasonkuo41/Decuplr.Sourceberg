@@ -1,10 +1,14 @@
 ﻿<Project>
 	<PropertyGroup>
-		<MajorVersion>1</MajorVersion>
-		<MinorVersion>0</MinorVersion>
-		<PatchVersion>0</PatchVersion>
-		<PreReleaseVersionLabel>1</PreReleaseVersionLabel>
-		<VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
+		<MyVersionPrefix>1.0.1</MyVersionPrefix>
+		<MyVersionSuffix>0</MyVersionSuffix>
+		<BuildDateTime>0</BuildDateTime>
+		<AssemblyVersion>$(MyVersionPrefix).$(MyVersionSuffix)</AssemblyVersion>
+		<!--File Version-->
+		<Version>$(MyVersionPrefix).$(BuildDateTime)</Version>
+		<!--Product Version-->
+		<PackageVersion>$(MyVersionPrefix).$(MyVersionSuffix)</PackageVersion>
+		<!--Nuget Package Version-->
 	</PropertyGroup>
 
 	<!-- Define some project name for reference use -->
