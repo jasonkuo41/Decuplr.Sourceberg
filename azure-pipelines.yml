@@ -65,7 +65,7 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'custom'
-    arguments: 'install -Source $(Build.ArtifactStagingDirectory)'
+    arguments: 'add -Source $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
   inputs:
