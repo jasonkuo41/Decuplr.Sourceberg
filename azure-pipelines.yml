@@ -59,13 +59,13 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '$(libraryProjects)'
-    versioningScheme: 'byPrereleaseNumber'
+    versioningScheme: 'byBuildNumber'
 
 # install the nupkg we just packed
 - task: NuGetCommand@2
   inputs:
     command: 'custom'
-    arguments: 'add Decuplr.Sourceberg.Diagnostics.1.0.0-CI-$(Date:yyyyMMdd)$(Rev:.rr).nupkg -Source $(Build.ArtifactStagingDirectory)'
+    arguments: 'add Decuplr.Sourceberg.Diagnostics.1.0.0-$(Build.BuildNumber).nupkg -Source $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -93,7 +93,7 @@ steps:
     command: 'pack'
     packagesToPack: '$(frameworkProjects)'
     arguments: '/p:CLIBuild=true'
-    versioningScheme: 'byPrereleaseNumber'
+    versioningScheme: 'byBuildNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
