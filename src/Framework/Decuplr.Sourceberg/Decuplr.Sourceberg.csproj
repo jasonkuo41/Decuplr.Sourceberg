@@ -27,7 +27,7 @@
 	<ItemGroup>
 		<None Include="$(Std20OutputPath)\$(Sourceberg).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="..\$(SourcebergGenerator)\$(Std20OutputPath)\$(SourcebergGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(NuGetPackageRoot)\$(MSDependencyInjectionAbstraction)\$(MSDependencyInjectionVersion)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(NuGetPackageRoot)\\$(MSDependencyInjectionAbstraction)\$(MSDependencyInjectionVersion)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
