@@ -1,0 +1,2 @@
+## Note
+Because somehow there's a problem with generatepathproperty = true and all the solutions I came up with are not worth the hassle, so, it's a hack, where we would copy this file to the analyzer root.
