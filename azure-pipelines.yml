@@ -3,7 +3,7 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: 'Build - $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)'
+name: preview.$(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
 - master
@@ -50,12 +50,9 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'pack'
-    nobuild: true
-    includesymbols: true
-    packagesToPack: '**/*.csproj'
-    arguments: '/p:MSBUILD=true'
-    versioningScheme: 'byPrereleaseNumber'
+    command: 'custom'
+    custom: 'pack'
+    arguments: '--include-symbols --no-build --version-suffix $(Build.BuildVersion)'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
