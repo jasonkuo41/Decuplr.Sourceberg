@@ -13,6 +13,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  libraryProjects: '**/Library/**/*.csproj'
+  frameworkProjects: '**/Framework/**/*.csproj'
 
 steps:
 
@@ -35,31 +37,65 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
+    projects: '$(libraryProjects)'
     feedsToUse: 'select'
+  displayName: 'Restore for Library'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
+    projects: '$(libraryProjects)'
     arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
-  displayName: 'dotnet build $(buildConfiguration) (CLI Build)'
+  displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: '**/test/**/*.csproj'
+    projects: '$(libraryProjects)'
     arguments: '--configuration $(buildConfiguration)'
     publishTestResults: false
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
-    packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
+    packagesToPack: '$(libraryProjects)'
     versioningScheme: 'byPrereleaseNumber'
+
+# install the nupkg we just packed
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      ls $(Build.ArtifactStagingDirectory)
+      Install-Package Decuplr.Sourceberg.Diagnostics -Source $(Build.ArtifactStagingDirectory)
+
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '$(frameworkProjects)'
+    feedsToUse: 'select'
+  displayName: 'Restore for Framework'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(frameworkProjects)'
+    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
+  displayName: 'Build Library'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '$(frameworkProjects)'
+    arguments: '--configuration $(buildConfiguration)'
+    publishTestResults: false
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
-    packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
+    packagesToPack: '$(frameworkProjects)'
+    arguments: '/p:CLIBuild=true'
     versioningScheme: 'byPrereleaseNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.

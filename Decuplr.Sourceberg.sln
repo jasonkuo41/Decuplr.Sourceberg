@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{E212A2E9-D5C0-47B4-A379-F3411741F1C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnostics.Generator.Tests", "test\Decuplr.Sourceberg.Diagnostics.Generator.Tests\Decuplr.Sourceberg.Diagnostics.Generator.Tests.csproj", "{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.TestUtilities", "test\Decuplr.Sourceberg.TestUtilities\Decuplr.Sourceberg.TestUtilities.csproj", "{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{50C9B622-E4FD-4957-91E6-1FB65729E9C0}"
@@ -29,16 +27,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnost
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnostics.Generator", "src\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj", "{3E7808AF-6D5B-4258-8905-71C8C3EF5FC8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decuplr.Sourceberg.Diagnostics.Generator.Tests", "test\Library\Decuplr.Sourceberg.Diagnostics.Generator.Tests\Decuplr.Sourceberg.Diagnostics.Generator.Tests.csproj", "{9B3CA9B4-894D-475E-B46D-D772ED10CB48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{176005C3-62B2-4903-8A5D-CB4AA6BEEF77}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,15 +59,19 @@ Global
 		{3E7808AF-6D5B-4258-8905-71C8C3EF5FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E7808AF-6D5B-4258-8905-71C8C3EF5FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E7808AF-6D5B-4258-8905-71C8C3EF5FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B3CA9B4-894D-475E-B46D-D772ED10CB48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B3CA9B4-894D-475E-B46D-D772ED10CB48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B3CA9B4-894D-475E-B46D-D772ED10CB48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B3CA9B4-894D-475E-B46D-D772ED10CB48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{176005C3-62B2-4903-8A5D-CB4AA6BEEF77} = {E212A2E9-D5C0-47B4-A379-F3411741F1C4}
 		{BB90F4EE-9FF6-4FF6-A00B-D937B92D7E53} = {E212A2E9-D5C0-47B4-A379-F3411741F1C4}
 		{F5FAA154-3198-4318-9B54-D995B3C585A8} = {50C9B622-E4FD-4957-91E6-1FB65729E9C0}
 		{3E7808AF-6D5B-4258-8905-71C8C3EF5FC8} = {50C9B622-E4FD-4957-91E6-1FB65729E9C0}
+		{9B3CA9B4-894D-475E-B46D-D772ED10CB48} = {E212A2E9-D5C0-47B4-A379-F3411741F1C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8538E34D-4EDD-47BD-A44B-B242038B4C7B}

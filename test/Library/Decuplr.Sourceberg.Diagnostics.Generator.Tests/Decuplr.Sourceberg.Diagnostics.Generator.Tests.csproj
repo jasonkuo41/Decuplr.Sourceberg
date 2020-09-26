@@ -21,8 +21,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj" />
-		<ProjectReference Include="..\Decuplr.Sourceberg.TestUtilities\Decuplr.Sourceberg.TestUtilities.csproj" />
+		<ProjectReference Include="..\..\..\src\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj" />
+		<ProjectReference Include="..\..\Decuplr.Sourceberg.TestUtilities\Decuplr.Sourceberg.TestUtilities.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
