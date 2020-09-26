@@ -52,7 +52,7 @@ steps:
   inputs:
     command: 'custom'
     custom: 'pack'
-    arguments: '--include-symbols --no-build --version-suffix $(Build.BuildVersion)'
+    arguments: '--include-symbols --no-build --version-suffix $(Build.BuildNumber)'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
