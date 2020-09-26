@@ -23,6 +23,10 @@
 		<MSDependencyInjectionAbstraction>$(MSDependencyInjection).Abstractions</MSDependencyInjectionAbstraction>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(MSBUILD) == 'true'">
+		<DefineConstants>$(DefineConstants);MSBUILD</DefineConstants>
+	</PropertyGroup>
+
 	<!-- Defines some core package version -->
 	<PropertyGroup>
 		<MSDependencyInjectionVersion>3.1.8</MSDependencyInjectionVersion>

@@ -3,7 +3,7 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: preview.$(Date:yyyyMMdd)$(Rev:.rr)
+name: 'Build - $(Build.BuildNumber)'
 
 trigger:
 - master
@@ -13,12 +13,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  libraryProjects: '**/Library/**/*.csproj'
-  frameworkProjects: '**/Framework/**/*.csproj'
 
 steps:
-
-- script: echo 'Build Number - $(Build.BuildNumber)'
 
 - task: UseDotNet@2
   inputs:
@@ -32,70 +28,33 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '3.1.x'
-    vsVersion: '16.8.0'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
-    projects: '$(libraryProjects)'
     feedsToUse: 'select'
   displayName: 'Restore for Library'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: '$(libraryProjects)'
-    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
   displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: '$(libraryProjects)'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
     publishTestResults: false
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
-    packagesToPack: '$(libraryProjects)'
-    versioningScheme: 'byPrereleaseNumber'
-
-# install the nupkg we just packed
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      ls $(Build.ArtifactStagingDirectory)
-      Install-Package Decuplr.Sourceberg.Diagnostics -Source $(Build.ArtifactStagingDirectory)
-
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '$(frameworkProjects)'
-    feedsToUse: 'select'
-  displayName: 'Restore for Framework'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '$(frameworkProjects)'
-    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
-  displayName: 'Build Library'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '$(frameworkProjects)'
-    arguments: '--configuration $(buildConfiguration)'
-    publishTestResults: false
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'pack'
-    packagesToPack: '$(frameworkProjects)'
-    arguments: '/p:CLIBuild=true'
+    nobuild: true
+    includesymbols: true
+    packagesToPack: '**/*.csproj'
+    arguments: '/p:MSBUILD=true'
     versioningScheme: 'byPrereleaseNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.

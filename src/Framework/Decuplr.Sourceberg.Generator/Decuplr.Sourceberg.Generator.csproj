@@ -24,11 +24,7 @@
 		<ProjectReference Include="..\..\Library\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(CLIBuild) == 'true'">
-		<PackageReference Include="Decuplr.Sourceberg.Diagnostics" Version="$(Vesion)" IncludeAssets="analyzer" PrivateAssets="all" />
-	</ItemGroup>
-	
-	<ItemGroup Condition="$(CLIBuild) != 'true'">
+	<ItemGroup>
 		<ProjectReference Include="..\..\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
 			<OutputItemType>Analyzer</OutputItemType>
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
