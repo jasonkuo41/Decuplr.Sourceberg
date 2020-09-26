@@ -8,10 +8,8 @@ name: preview.$(Date:yyyyMMdd)$(Rev:.rr)
 trigger:
 - master
 
-# We use windows agent because .Net Core Sdk has some problem dealing with source generator
 pool:
-  #vmImage: 'ubuntu-latest'
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
@@ -39,18 +37,11 @@ steps:
     command: 'restore'
     feedsToUse: 'select'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '**\*.sln'
-    clean: true
-    maximumCpuCount: true
-    msbuildArchitecture: 'x64'
-
-#- task: DotNetCoreCLI@2
-#  inputs:
-#    command: 'build'
-#    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
-#  displayName: 'dotnet build $(buildConfiguration) (CLI Build)'
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration) /p:CLIBuild=true'
+  displayName: 'dotnet build $(buildConfiguration) (CLI Build)'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -63,9 +54,13 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
-    nobuild: true
-    versioningScheme: 'byBuildNumber'
+    versioningScheme: 'byPrereleaseNumber'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj;!**/Analyzers/**/*.csproj;!**/test/**/*.csproj'
+    versioningScheme: 'byPrereleaseNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
