@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Library\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
+		<ProjectReference Include="..\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 		<ProjectReference Include="..\Decuplr.Sourceberg.Diagnostics\Decuplr.Sourceberg.Diagnostics.csproj" />
 	</ItemGroup>
 

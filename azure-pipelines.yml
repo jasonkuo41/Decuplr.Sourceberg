@@ -3,7 +3,7 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: 'Build - $(Build.BuildNumber)'
+name: 'Build - $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)'
 
 trigger:
 - master
@@ -45,7 +45,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
+    arguments: '--configuration $(buildConfiguration) --no-build'
     publishTestResults: false
 
 - task: DotNetCoreCLI@2
