@@ -3,7 +3,7 @@
 		<MyVersionPrefix>1.0.1</MyVersionPrefix>
 		<MyVersionSuffix>0</MyVersionSuffix>
 		<BuildDateTime>0</BuildDateTime>
-		<AssemblyVersion>$(MyVersionPrefix)-$(MyVersionSuffix)</AssemblyVersion>
+		<AssemblyVersion>$(MyVersionPrefix)</AssemblyVersion>
 		<!--File Version-->
 		<Version>$(MyVersionPrefix).$(BuildDateTime)</Version>
 		<!--Product Version-->
