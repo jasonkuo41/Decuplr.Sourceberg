@@ -62,13 +62,10 @@ steps:
     versioningScheme: 'byPrereleaseNumber'
 
 # install the nupkg we just packed
-- task: PowerShell@2
+- task: NuGetCommand@2
   inputs:
-    targetType: 'inline'
-    script: |
-      ls $(Build.ArtifactStagingDirectory)
-      Install-Package Decuplr.Sourceberg.Diagnostics -Source $(Build.ArtifactStagingDirectory) -Scope CurrentUser
-
+    command: 'custom'
+    arguments: 'install -Source $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
   inputs:
