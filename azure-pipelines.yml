@@ -3,18 +3,16 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: preview.$(Date:yyyyMMdd)$(Rev:.rr)
+name: Master-Build.$(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
 - master
-- test-pipeline
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
-  Suffix: 'preview.$(Date:yyyyMMdd)$(Rev:.rr)'
 
 steps:
 
@@ -41,7 +39,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true /p:SourcebergVersionSuffix=$(Build.BuildNumber)'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
   displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
@@ -53,10 +51,11 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
+    packagesToPack: '**/*.csproj'
     nobuild: true
     includesymbols: true
-    packagesToPack: '**/*.csproj'
-    buildProperties: 'SourcebergVersionSuffix=$(Build.BuildNumber)'
+    versioningScheme: 'off'
+    buildProperties: 'SourcebergVersionSuffix="preview.$(Build.BuildId)"'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
@@ -70,3 +69,4 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'internal'
     publishVstsFeed: '923593c5-d46b-4e5f-a025-2be584aed5c3/e54287c5-ab76-497c-ab3b-4ec175185a21'
+    allowPackageConflicts: true
