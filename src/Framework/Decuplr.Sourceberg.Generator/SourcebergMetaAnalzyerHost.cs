@@ -10,9 +10,14 @@ namespace Decuplr.Sourceberg.Generator {
 
         internal class AnalyzerGroup : SourcebergAnalyzerGroup {
             public override void ConfigureAnalyzerServices(IServiceCollection collection) {
+                ResourceLoader.Load();
                 collection.AddScoped<SourcebergGeneratorHostBuilder>();
                 collection.AddScoped<SourcebergAnalyzerHostBuilder>();
             }
+        }
+
+        static SourcebergMetaAnalzyerHost() {
+            ResourceLoader.Load();
         }
 
         protected override Type AnalyzerGroupType { get; } = typeof(AnalyzerGroup);

@@ -12,11 +12,14 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.8.0-3.final" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8"/>
+		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" GeneratePathProperty="true" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" GeneratePathProperty="true" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Include="..\..\Common\Ensure.cs" Link=".common\Ensure.cs" />
+		<Compile Include="..\..\Common\ResourceLoader.cs" Link=".common\ResourceLoader.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,6 +33,15 @@
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 			<SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
 		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection_Abstractions)\lib\netstandard2.0\*.dll" Visible="false" />
+		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection)\lib\netstandard2.0\*.dll" Visible="false" />
+		<EmbeddedResource Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Visible="false" />
+		<EmbeddedResource Include="..\..\Library\$(Diagnostics)\$(OutputPath)\$(Diagnostics).dll" Visible="false" />
+		<EmbeddedResource Include="..\..\Library\$(CodeBuilder)\$(OutputPath)\$(CodeBuilder).dll" Visible="false" />
+		<EmbeddedResource Include="..\Decuplr.Sourceberg\$(OutputPath)\Decuplr.Sourceberg.dll" Visible="false" />
 	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->

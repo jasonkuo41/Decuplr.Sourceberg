@@ -1,16 +1,36 @@
 ﻿<Project>
-	<PropertyGroup>
-		<MyVersionPrefix>1.0.0</MyVersionPrefix>
-		<MyVersionSuffix>0</MyVersionSuffix>
-		<BuildDateTime>0</BuildDateTime>
-		<AssemblyVersion>$(MyVersionPrefix)</AssemblyVersion>
-		<!--File Version-->
-		<Version>$(MyVersionPrefix).$(BuildDateTime)</Version>
-		<!--Product Version-->
-		<PackageVersion>$(MyVersionPrefix)-$(MyVersionSuffix)</PackageVersion>
-		<!--Nuget Package Version-->
+	
+	<!--Append symbols to the custom variables-->
+	<PropertyGroup Condition="$(MyVersionSuffix) != ''">
+		<MyVersionSuffix>-$(MyVersionSuffix)</MyVersionSuffix>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(BuildDateTime) != ''">
+		<BuildDateTime>.$(BuildDateTime)</BuildDateTime>
+	</PropertyGroup>
+	
+	<!-- Set the versions -->
+	<PropertyGroup>
+		
+		<!--Update this for new release-->
+		<MyVersionPrefix>1.0.0</MyVersionPrefix>
+		
+		<!--File Version-->
+		<AssemblyVersion>$(MyVersionPrefix)</AssemblyVersion>
+		
+		<!--Product Version-->
+		<Version>$(MyVersionPrefix)$(BuildDateTime)</Version>
+		
+		<!--Nuget Package Version-->
+		<PackageVersion>$(MyVersionPrefix)$(MyVersionSuffix)</PackageVersion>
+		
+	</PropertyGroup>
+
+
+	<PropertyGroup Condition="$(MyVersionSuffix) == ''">
+		<PackageVersion>$(MyVersionPrefix)</PackageVersion>
+	</PropertyGroup>
+	
 	<!-- Define some project name for reference use -->
 	<PropertyGroup>
 		<Sourceberg>Decuplr.Sourceberg</Sourceberg>

@@ -26,6 +26,10 @@ namespace Decuplr.Sourceberg.Generator {
             }
         }
 
+        static SourcebergMetaGeneratorHost() {
+            ResourceLoader.Load();
+        }
+
         protected override Type GeneratorGroupType { get; } = typeof(Startup);
     }
 }

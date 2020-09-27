@@ -11,8 +11,6 @@
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.8.0-3.final" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
 	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->
@@ -29,8 +27,8 @@
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
 	<ItemGroup>
 		<None Include="..\$(DiagnosticsGenerator)\$(Std20OutputPath)\$(DiagnosticsGenerator).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(Std20OutputPath)\$(Diagnostics).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="..\$(CodeBuilder)\$(Std20OutputPath)\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<!--<None Include="$(Std20OutputPath)\$(Diagnostics).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
+		<!--<None Include="..\$(CodeBuilder)\$(Std20OutputPath)\$(CodeBuilder).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
 	</ItemGroup>
 	
 </Project>
