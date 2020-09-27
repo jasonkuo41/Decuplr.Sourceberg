@@ -7,6 +7,9 @@
 		<MinorVersion>0</MinorVersion>
 		<PatchVersion>0</PatchVersion>
 		<VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
+
+		<Version>$(VersionPrefix)</Version>
+		<Version Condition="$(SourcebergVersionSuffix) != ''">$(VersionPrefix)-$(SourcebergVersionSuffix)</Version>
 		
 	</PropertyGroup>
 
