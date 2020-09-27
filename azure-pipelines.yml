@@ -41,7 +41,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true /p:MyVersionSuffix=$(Build.BuildNumber) -p:BuildDateTime=$(Build.BuildNumber)'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true /p:VersionSuffix=$(Build.BuildNumber)'
   displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
@@ -56,7 +56,7 @@ steps:
     nobuild: true
     includesymbols: true
     packagesToPack: '**/*.csproj'
-    buildProperties: 'MyVersionSuffix=$(Build.BuildNumber)'
+    buildProperties: 'VersionSuffix=$(Build.BuildNumber)'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
