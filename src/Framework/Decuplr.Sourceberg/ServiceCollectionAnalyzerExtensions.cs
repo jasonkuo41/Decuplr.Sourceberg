@@ -46,9 +46,7 @@ namespace Decuplr.Sourceberg {
             return services.AddGeneratorService(typeof(TReceiver), serviceFactory);
         }
 
-        internal static IServiceCollection AddDefaultSourbergServices(this IServiceCollection services, bool isGenerator) {
-            if (isGenerator)
-                services.AddSingleton<SourcebergAnalyzerHostProvider>();
+        internal static IServiceCollection AddDefaultSourbergServices(this IServiceCollection services) {
             services.AddScoped<DiagnosticBag>();
             services.AddScoped(typeof(IDiagnosticReporter<>), typeof(DiagnosticReporter<>));
 
@@ -89,7 +87,7 @@ namespace Decuplr.Sourceberg {
             if (analyzerType.ImplementsOrInherits(typeof(SourcebergAnalyzerGroup))) {
                 Services.Add(Rewrite(descriptor, ServiceLifetime.Singleton));
                 Services.AddSingleton(typeof(SourcebergAnalyzerGroup), services => services.GetRequiredService(analyzerType));
-                Services.AddSingleton(typeof(DiagnosticAnalyzer), services => services.GetRequiredService<SourcebergAnalyzerHostProvider>().GetAnalyzerHost(analyzerType));
+                Services.AddSingleton(typeof(DiagnosticAnalyzer), new SourcebergAnalyzerHost(analyzerType));
                 return true;
             }
             if (analyzerType.ImplementsOrInherits(typeof(DiagnosticAnalyzer))) {

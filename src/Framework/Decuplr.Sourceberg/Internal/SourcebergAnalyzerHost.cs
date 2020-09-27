@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Decuplr.Sourceberg.Services.Implementation;
@@ -12,19 +13,26 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Decuplr.Sourceberg.Internal {
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class SourcebergAnalyzerHost : DiagnosticAnalyzer {
+    [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1001:Missing diagnostic analyzer attribute.", Justification = "Provides a base class for the actual analyzer")]
+    public sealed class SourcebergAnalyzerHost : DiagnosticAnalyzer {
 
         private readonly IServiceProvider _provider;
         private readonly GeneratedCodeAnalysisFlags _generatorFlags;
 
         internal const string AnalyzerTypeName = nameof(AnalyzerGroupType);
 
-        protected abstract Type AnalyzerGroupType { get; }
+        public Type AnalyzerGroupType { get; }
 
-        protected SourcebergAnalyzerHost() {
+        public static DiagnosticAnalyzer CreateDiagnosticAnalyzer<T>()
+            where T : SourcebergAnalyzerGroup {
+            return new SourcebergAnalyzerHost(typeof(T));
+        }
+
+        internal SourcebergAnalyzerHost(Type type) {
             // create the setup instance
+            AnalyzerGroupType = type;
             var analyzerSetup = (SourcebergAnalyzerGroup)Activator.CreateInstance(AnalyzerGroupType);
-            var serviceCollection = new ServiceCollection().AddDefaultSourbergServices(false);
+            var serviceCollection = new ServiceCollection().AddDefaultSourbergServices();
             analyzerSetup.ConfigureAnalyzerServices(serviceCollection);
 
             _generatorFlags = analyzerSetup.GeneratedCodeAnalysisFlags;
@@ -34,6 +42,7 @@ namespace Decuplr.Sourceberg.Internal {
 
         internal SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
             // create the setup instance
+            AnalyzerGroupType = analyzer.GetType();
             _generatorFlags = analyzer.GeneratedCodeAnalysisFlags;
             _provider = serviceProvider;
             SupportedDiagnostics = GetSupportedDiagnostics(supportedService);

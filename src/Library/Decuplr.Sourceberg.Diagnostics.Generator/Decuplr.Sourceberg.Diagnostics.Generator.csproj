@@ -12,6 +12,8 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" GeneratePathProperty ="true" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0-3.final" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" GeneratePathProperty="true" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" GeneratePathProperty="true" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,6 +33,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection_Abstractions)\lib\netstandard2.0\*.dll" Visible="false" />
+		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection)\lib\netstandard2.0\*.dll" Visible="false" />
 		<EmbeddedResource Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Visible="false"/>
 		<EmbeddedResource Include="..\$(Diagnostics)\$(OutputPath)\$(Diagnostics).dll" Visible="false" />
 		<EmbeddedResource Include="..\$(CodeBuilder)\$(OutputPath)\$(CodeBuilder).dll" Visible="false" />

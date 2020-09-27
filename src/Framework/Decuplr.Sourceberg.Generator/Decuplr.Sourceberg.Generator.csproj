@@ -41,7 +41,7 @@
 		<EmbeddedResource Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Visible="false" />
 		<EmbeddedResource Include="..\..\Library\$(Diagnostics)\$(OutputPath)\$(Diagnostics).dll" Visible="false" />
 		<EmbeddedResource Include="..\..\Library\$(CodeBuilder)\$(OutputPath)\$(CodeBuilder).dll" Visible="false" />
-		<EmbeddedResource Include="..\Decuplr.Sourceberg\$(OutputPath)\Decuplr.Sourceberg.dll" Visible="false" />
+		<EmbeddedResource Include="..\Decuplr.Sourceberg\$(OutputPath)\Decuplr.Sourceberg.dll" Visible="false"/>
 	</ItemGroup>
 
 	<!--  disables the nullable warnings when compiling for .NET Standard 2.0 -->

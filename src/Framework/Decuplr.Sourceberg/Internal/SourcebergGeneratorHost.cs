@@ -16,7 +16,7 @@ namespace Decuplr.Sourceberg.Internal {
     /// </summary>
     /// <typeparam name="TGeneratorStartup"></typeparam>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class SourcebergGeneratorHost : ISourceGenerator {
+    public sealed class SourcebergGeneratorHost : ISourceGenerator {
 
         [SuppressMessage("MicrosoftCodeAnalysisReleaseTracking", "RS2008", Justification = "A diagnostic that only generates to notify user of what exception has occured causing the source generator unable to proceed")]
         private static readonly DiagnosticDescriptor UnexpectedExceptionDescriptor
@@ -24,7 +24,15 @@ namespace Decuplr.Sourceberg.Internal {
 
         internal const string StartupTypeName = nameof(GeneratorGroupType);
 
-        protected abstract Type GeneratorGroupType { get; }
+        public Type GeneratorGroupType { get; }
+
+        public static ISourceGenerator CreateGenerator<T>() where T : ISourcebergGeneratorGroup {
+            return new SourcebergGeneratorHost(typeof(T));
+        }
+
+        internal SourcebergGeneratorHost(Type generatorGroup) {
+            GeneratorGroupType = generatorGroup;
+        }
 
         public void Execute(GeneratorExecutionContext context) {
             if (context.SyntaxReceiver is not AggregatedSyntaxCapture asc)
@@ -77,7 +85,7 @@ namespace Decuplr.Sourceberg.Internal {
             var generator = (ISourcebergGeneratorGroup)Activator.CreateInstance(GeneratorGroupType);
             var collection = new ServiceCollection();
 
-            collection.AddDefaultSourbergServices(true);
+            collection.AddDefaultSourbergServices();
             collection.AddSingleton(generator);
             collection.AddSingleton<ISyntaxReceiver, PredicateSyntaxCapture>();
             collection.AddSingleton<AggregatedSyntaxCapture>();
