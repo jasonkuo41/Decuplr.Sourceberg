@@ -3,7 +3,7 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: preview.$(Date:yyyyMMdd)$(Rev:.rr)
+name: 1.0.0-preview.$(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
 - master
@@ -14,7 +14,6 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  Suffix: 'preview.$(Date:yyyyMMdd)$(Rev:.rr)'
 
 steps:
 
@@ -41,7 +40,7 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true /p:SourcebergVersionSuffix=$(Build.BuildNumber)'
+    arguments: '--configuration $(buildConfiguration) /p:MSBUILD=true'
   displayName: 'Build Library'
 
 - task: DotNetCoreCLI@2
@@ -53,10 +52,10 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'pack'
+    packagesToPack: '**/*.csproj'
     nobuild: true
     includesymbols: true
-    packagesToPack: '**/*.csproj'
-    buildProperties: 'SourcebergVersionSuffix=$(Build.BuildNumber)'
+    versioningScheme: 'byBuildNumber'
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
