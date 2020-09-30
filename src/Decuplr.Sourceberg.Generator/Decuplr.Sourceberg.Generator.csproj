@@ -19,11 +19,11 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Decuplr.Sourceberg\Decuplr.Sourceberg.csproj" />
-		<ProjectReference Include="..\..\Library\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
+		<ProjectReference Include="..\Decuplr.Sourceberg.CodeBuilder\Decuplr.Sourceberg.CodeBuilder.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Library\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
+		<ProjectReference Include="..\Decuplr.Sourceberg.Diagnostics.Generator\Decuplr.Sourceberg.Diagnostics.Generator.csproj">
 			<OutputItemType>Analyzer</OutputItemType>
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 			<SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
@@ -31,15 +31,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Include="..\..\Common\Ensure.cs" Link=".common\Ensure.cs" />
-		<Compile Include="..\..\Common\ModuleInitializerAttribute.cs" Link=".common\ModuleInitializerAttribute.cs" />
-		<Compile Include="..\..\Common\EmbeddedResourceLoader.cs" Link=".common\EmbeddedResourceLoader.cs" />
+		<Compile Include="..\Common\Ensure.cs" Link=".common\Ensure.cs" />
+		<Compile Include="..\Common\ModuleInitializerAttribute.cs" Link=".common\ModuleInitializerAttribute.cs" />
+		<Compile Include="..\Common\EmbeddedResourceLoader.cs" Link=".common\EmbeddedResourceLoader.cs" />
 	</ItemGroup>
 
 	<!-- Embed code for source generator-->
 	<ItemGroup>
-		<EmbeddedResource Include="..\..\Common\EmbeddedResourceLoader.cs" Link=".common\EmbeddedResourceLoader.cs" />
-		<EmbeddedResource Include="..\..\Common\ModuleInitializerAttribute.cs" Link=".common\ModuleInitializerAttribute.cs" />
+		<EmbeddedResource Include="..\Common\EmbeddedResourceLoader.cs" Link=".common\EmbeddedResourceLoader.cs" />
+		<EmbeddedResource Include="..\Common\ModuleInitializerAttribute.cs" Link=".common\ModuleInitializerAttribute.cs" />
 	</ItemGroup>
 
 	<!-- Embed Binary Resources (Required Assembly) -->
@@ -47,8 +47,8 @@
 		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection_Abstractions)\lib\netstandard2.0\*.dll" Visible="false" />
 		<EmbeddedResource Include="$(PkgMicrosoft_Extensions_DependencyInjection)\lib\netstandard2.0\*.dll" Visible="false" />
 		<EmbeddedResource Include="$(PkgMicrosoft_Bcl_HashCode)\lib\netstandard2.0\*.dll" Visible="false" />
-		<EmbeddedResource Include="..\..\Library\$(Diagnostics)\$(OutputPath)\$(Diagnostics).dll" Visible="false" />
-		<EmbeddedResource Include="..\..\Library\$(CodeBuilder)\$(OutputPath)\$(CodeBuilder).dll" Visible="false" />
+		<EmbeddedResource Include="..\$(Diagnostics)\$(OutputPath)\$(Diagnostics).dll" Visible="false" />
+		<EmbeddedResource Include="..\$(CodeBuilder)\$(OutputPath)\$(CodeBuilder).dll" Visible="false" />
 		<EmbeddedResource Include="..\Decuplr.Sourceberg\$(OutputPath)\Decuplr.Sourceberg.dll" Visible="false" />
 	</ItemGroup>
 

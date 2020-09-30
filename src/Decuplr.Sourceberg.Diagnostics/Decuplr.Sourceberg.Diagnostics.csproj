@@ -19,9 +19,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\..\Common\NullableAttributes.cs" Link="Common\NullableAttributes.cs" />
-		<Compile Include="..\..\Common\StringExtensions.cs" Link="Common\StringExtensions.cs" />
-		<Compile Include="..\..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
+		<Compile Include="..\Common\NullableAttributes.cs" Link="Common\NullableAttributes.cs" />
+		<Compile Include="..\Common\StringExtensions.cs" Link="Common\StringExtensions.cs" />
+		<Compile Include="..\Common\CollectionExtensions.cs" Link="Common\CollectionExtensions.cs" />
 	</ItemGroup>
 
 	<!-- Including the generator output to the package path allows source generator to correctly execute  -->
