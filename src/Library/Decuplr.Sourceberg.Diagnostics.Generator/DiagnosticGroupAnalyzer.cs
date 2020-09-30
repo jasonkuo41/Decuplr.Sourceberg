@@ -25,7 +25,6 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
             });
 
         public override void Initialize(AnalysisContext context) {
-            ResourceLoader.Load();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
             context.RegisterCompilationStartAction(startCompilation => {

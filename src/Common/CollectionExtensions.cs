@@ -21,6 +21,18 @@ namespace Decuplr {
             return removeCount;
         }
 
+        public static void InsertAfter<T>(this IList<T> list, int index, T item) {
+            list.Insert(index + 1, item);
+        }
+
+        public static void InsertAfter<T>(this IList<T> list, int index, IEnumerable<T> items) {
+            var count = 0;
+            foreach (var item in items) {
+                list.InsertAfter(index + count, item);
+                ++count;
+            }
+        }
+
         public static IEnumerable<TItem> WhereNotNull<TItem>(this IEnumerable<TItem?> enumerable) where TItem : class => enumerable.Where(x => x is { })!;
 
 #if NETSTANDARD2_0

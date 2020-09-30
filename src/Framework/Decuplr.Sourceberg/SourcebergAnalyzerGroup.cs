@@ -5,6 +5,9 @@ namespace Decuplr.Sourceberg {
     public abstract class SourcebergAnalyzerGroup {
         public virtual GeneratedCodeAnalysisFlags GeneratedCodeAnalysisFlags { get; } = GeneratedCodeAnalysisFlags.None;
 
-        public abstract void ConfigureAnalyzerServices(IServiceCollection services);
+        public abstract void ConfigureAnalyzerServices(IAnalyzerServiceCollection services);
     }
+
 }
+
+

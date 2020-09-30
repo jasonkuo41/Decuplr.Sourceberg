@@ -3,5 +3,14 @@
 	<PropertyGroup>
 		<Std20OutputPath>$(OutputPath)\netstandard2.0</Std20OutputPath>
 	</PropertyGroup>
-	
+
+	<!-- This allows us to rename embedded resource into it's logical path-->
+	<Target Name="ModifyEmbeddedResourceNames" BeforeTargets="CreateManifestResourceNames">
+		<ItemGroup>
+			<EmbeddedResource>
+				<LogicalName>%(EmbeddedResource.TargetPath)</LogicalName>
+			</EmbeddedResource>
+		</ItemGroup>
+	</Target>
+
 </Project>

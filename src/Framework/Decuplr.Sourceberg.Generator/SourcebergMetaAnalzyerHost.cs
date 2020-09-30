@@ -16,7 +16,8 @@ namespace Decuplr.Sourceberg.Generator {
     public class SourcebergMetaAnalzyerHost : DiagnosticAnalyzer {
 
         internal class SourcebergMetaAnalyzerGroup : SourcebergAnalyzerGroup {
-            public override void ConfigureAnalyzerServices(IServiceCollection collection) {
+            public override void ConfigureAnalyzerServices(IAnalyzerServiceCollection collection) {
+                collection.AddSymbolAnalyzer<SourcebergMetaAnalyzer>();
                 collection.AddScoped<SourcebergGeneratorHostBuilder>();
                 collection.AddScoped<SourcebergAnalyzerHostBuilder>();
             }
@@ -27,8 +28,6 @@ namespace Decuplr.Sourceberg.Generator {
         private DiagnosticAnalyzer Analyzer => _host ??= SourcebergAnalyzerHost.CreateDiagnosticAnalyzer<SourcebergMetaAnalyzerGroup>();
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => Analyzer.SupportedDiagnostics;
-
-        public SourcebergMetaAnalzyerHost() => ResourceLoader.Load();
 
         [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1025", Justification = "Wrapping method.")]
         [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1026", Justification = "Wrapping method.")]

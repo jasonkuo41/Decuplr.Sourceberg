@@ -28,7 +28,6 @@ namespace Decuplr.Sourceberg.Diagnostics.Generator {
         }
 
         public void Initialize(GeneratorInitializationContext context) {
-            ResourceLoader.Load();
             context.RegisterForSyntaxNotifications(() => new SyntaxCapture());
         }
 

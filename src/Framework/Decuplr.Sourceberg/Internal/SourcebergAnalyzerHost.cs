@@ -9,6 +9,7 @@ using Decuplr.Sourceberg.Services.Implementation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Decuplr.Sourceberg.Internal {
 
@@ -33,19 +34,32 @@ namespace Decuplr.Sourceberg.Internal {
             AnalyzerGroupType = type;
             var analyzerSetup = (SourcebergAnalyzerGroup)Activator.CreateInstance(AnalyzerGroupType);
             var serviceCollection = new ServiceCollection().AddDefaultSourbergServices();
-            analyzerSetup.ConfigureAnalyzerServices(serviceCollection);
+            analyzerSetup.ConfigureAnalyzerServices(new ServiceCollectionAdapter(serviceCollection));
+            serviceCollection = serviceCollection.ExpandAnalyzerCollection();
 
             _generatorFlags = analyzerSetup.GeneratedCodeAnalysisFlags;
             _provider = serviceCollection.BuildServiceProvider();
             SupportedDiagnostics = GetSupportedDiagnostics(serviceCollection);
         }
 
-        internal SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider serviceProvider, IEnumerable<ServiceDescriptor> supportedService) {
+        internal SourcebergAnalyzerHost(SourcebergAnalyzerGroup analyzer, IServiceProvider origianlProvider, IEnumerable<ServiceDescriptor> supportedService) {
             // create the setup instance
             AnalyzerGroupType = analyzer.GetType();
+            // This allows us to add singleton service to the new service collection that points back to the original provider.
+            // We don't add default sourceberg services because we already have it in the original provider.
+            IServiceCollection serviceCollection = new ServiceCollection { 
+                supportedService.Select(x => new ServiceDescriptor(x.ServiceType, origianlProvider.GetRequiredService(x.ServiceType))) 
+            };
+
+            var customServiceCollection = new ServiceCollection();
+            analyzer.ConfigureAnalyzerServices(new ServiceCollectionAdapter(customServiceCollection));
+
+            // Add back the custom service collection so it can override some preset service inherit from the generator
+            serviceCollection = serviceCollection.Add(customServiceCollection.ExpandAnalyzerCollection());
+
             _generatorFlags = analyzer.GeneratedCodeAnalysisFlags;
-            _provider = serviceProvider;
-            SupportedDiagnostics = GetSupportedDiagnostics(supportedService);
+            _provider = serviceCollection.BuildServiceProvider();
+            SupportedDiagnostics = GetSupportedDiagnostics(serviceCollection);
         }
 
         private static ImmutableArray<DiagnosticDescriptor> GetSupportedDiagnostics(IEnumerable<ServiceDescriptor> descriptors)

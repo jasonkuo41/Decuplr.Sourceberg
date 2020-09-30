@@ -11,10 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Decuplr.Sourceberg.Internal {
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TGeneratorStartup"></typeparam>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class SourcebergGeneratorHost : ISourceGenerator {
 
@@ -90,9 +86,9 @@ namespace Decuplr.Sourceberg.Internal {
             collection.AddSingleton<ISyntaxReceiver, PredicateSyntaxCapture>();
             collection.AddSingleton<AggregatedSyntaxCapture>();
 
-            generator.ConfigureServices(collection, new GeneratorServiceCollection(collection));
+            generator.ConfigureServices(new ServiceCollectionAdapter(collection));
 
-            var serviceProvider = collection.BuildServiceProvider();
+            var serviceProvider = collection.ExpandGeneratorCollection().BuildServiceProvider();
             context.RegisterForSyntaxNotifications(serviceProvider.GetRequiredService<AggregatedSyntaxCapture>);
         }
     }
