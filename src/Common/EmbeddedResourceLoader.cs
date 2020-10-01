@@ -51,14 +51,10 @@ namespace Decuplr.Sourceberg.Internal {
                 return;
             // Load embedded assemblies, well if the assembly itself have [ExcludeEmbeddedAssembly("All")]
             var currentAssembly = typeof(EmbeddedResourceLoader).Assembly;
-#if Internal_Analyzer
-            var excludingResources = new HashSet<string>();
-#else
-            var excludingResources = new HashSet<string>(currentAssembly.GetCustomAttributes<ExcludeEmbeddedAssemblyAttribute>().Select(x => x.ExcludingManifestResourceName));
+            var excludingResources = new HashSet<string>(currentAssembly.CustomAttributes.Where(x => x.AttributeType.FullName == "Decuplr.Sourceberg.ExcludeEmbeddedAssemblyAttribute").Select(x => (string)x.ConstructorArguments.Single().Value));
             // If we exclude all, then we don't use any assembly.
             if (excludingResources.Contains("*"))
                 return;
-#endif
             foreach (var resourceName in currentAssembly.GetManifestResourceNames().Where(x => x.EndsWith(".dll") && !excludingResources.Contains(x))) {
                 using var resourceStream = currentAssembly.GetManifestResourceStream(resourceName);
                 using var memory = new MemoryStream(resourceStream.CanSeek ? (int)resourceStream.Length : 1024);
